@@ -10,3 +10,8 @@ def can_write_member(member: FamilyMember, family: Family, user: User) -> bool:
     if member.linked_user_id is None:
         return is_owner(family, user)
     return member.linked_user_id == user.id
+
+# Check read permission
+def can_read_member(member: FamilyMember, family: Family, user: User) -> bool:
+    """Only owner account can read and write"""
+    return can_write_member(member, family, user)

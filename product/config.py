@@ -10,3 +10,8 @@ class ProductEnv(BaseSettings):
     llm_base_url: str = "http://localhost:11434/v1"
     llm_api_key: str = "ollama"
     llm_model: str = "qwen2.5:7b-instruct"
+
+    tavily_api_key: str = ""
+    vlm_model: str = "qwen2.5vl:7b"
+    storage_dir: str = "storage"
+    timezone: str = "Asia/Ho_Chi_Minh"

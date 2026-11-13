@@ -37,7 +37,7 @@ async def send_message(session: AsyncSession, member_id: UUID, content: str, use
         select(ChatMessage).where(ChatMessage.session_id == chat.id).order_by(ChatMessage.created_at))
     messages = [(m.role.value, m.content) for m in history]         
 
-    result = agent.invoke({"messages": messages})
+    result = await agent.ainvoke({"messages": messages})
     reply_text = result["messages"][-1].content
 
     # Reply from assistant
