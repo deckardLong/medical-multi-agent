@@ -9,8 +9,9 @@ from product.config import ProductEnv
 
 env = ProductEnv()
 
-def vlm(temperature: float = 0.0) -> ChatOpenAI:
-    return ChatOpenAI(base_url=env.llm_base_url, api_key=env.llm_api_key, model=env.vlm_model, temperature=temperature)
+def vlm(temperature: float = 0.0, model: str | None = None) -> ChatOpenAI:
+    return ChatOpenAI(base_url=env.llm_base_url, api_key=env.llm_api_key, model=model or env.vlm_model,
+                      temperature=temperature)
 
 def image_message(image_bytes: bytes, mime: str, prompt: str) -> HumanMessage:
     b64 = base64.b64encode(image_bytes).decode()

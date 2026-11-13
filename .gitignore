@@ -223,3 +223,6 @@ __marimo__/
 derived/
 corpus/
 state/
+
+# Ảnh/tài liệu y tế người dùng tải lên — dữ liệu cá nhân, không bao giờ commit
+storage/

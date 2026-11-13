@@ -21,4 +21,6 @@ def medical_retrieval_tool(query: str) -> str:
     candidates = _searcher.search(vectors)
     if not candidates:
         return "Không tìm thấy tài liệu liên quan trong corpus."
-    return "\n\n".join(f"[{c.doc_id}] {c.text[:500]}" for c in candidates[:5])
+    # ctx = "tiêu đề bài | mục"; tiêu đề là thứ người dùng hiểu được khi dẫn nguồn, doc_id thì không
+    return "\n\n".join(f"[{i}] Nguồn: {(c.ctx or '').split(' | ')[0].strip() or c.doc_id}\n{(c.text or '')[:500]}"
+                       for i, c in enumerate(candidates[:5], 1))

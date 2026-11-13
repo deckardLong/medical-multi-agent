@@ -11,21 +11,23 @@ Two largely independent subsystems share this repo:
    Chunking → embedding (BGE-M3 dense+sparse) → Qdrant indexing → hybrid search → rerank → doc/chunk
    selection → submission file.
 2. **`product/`** — a separate FastAPI backend ("Family Health Assistant"): users, families, family
-   members, connections, JWT auth, async SQLAlchemy/Postgres. It does **not** currently import anything
-   from `retrieval/`; treat it as its own app sharing the repo root.
+   members, connections, JWT auth, async SQLAlchemy/Postgres, plus an LLM agent (`product/apps/agent/`)
+   whose `medical_retrieval_tool` imports `retrieval/` + `common/` to search the Qdrant collection.
 
 Comments and CLI `--help` text in `retrieval/`, `corpus_sync/`, and `common/` are written in Vietnamese —
 match that when editing those files rather than switching to English.
 
 ## Environment caveat (important)
 
-There is no `requirements.txt`/`pyproject.toml` in the repo. The local `venv/` only has the **`product/`**
-app's dependencies installed (fastapi, sqlalchemy, asyncpg, psycopg2-binary, alembic, python-jose, passlib,
-pydantic-settings, uvicorn, ...). It does **not** have `retrieval/`'s dependencies (torch, transformers/
-FlagEmbedding, qdrant-client, pyarrow, pyyaml, tqdm, etc.) — those scripts cannot actually be executed in
-this sandbox. Also, this sandbox has no real network access to huggingface.co, so `corpus_sync.run_fetch`
-(and anything needing the HF Hub or a GPU) can only be *reviewed/edited*, not run, from here; it's meant to
-run on a machine with real internet/GPU.
+`requirements.txt` pins the versions installed in the local `venv/`, which has both `product/` and
+`retrieval/` dependencies (CPU-only torch). Indexing/search/the agent run here; chunking (`chonkie`,
+`langchain-text-splitters`, not installed locally) and GPU embedding are meant for another machine.
+Settings come from `.env` (template: `.env.example`): `PRODUCT_*` → `product/config.py::ProductEnv`,
+unprefixed → `common/config/env.py::Env`. `git` is at `D:\Git\cmd\git.exe` and is not on this shell's PATH.
+
+The machine has 16GB RAM and WSL2/Docker is capped at 10GB: the Qdrant collection (~3M points) uses
+3–8GB, more while optimizing after bulk upserts (status `yellow`; searches can time out until `green`). Don't
+run a second Qdrant container (`qdrant-r2ai`, an older copy of the same collection) alongside it.
 
 ## Commands
 
@@ -117,8 +119,18 @@ which fetches precomputed chunks/vectors from the HF dataset repo) depend on.
 ## Architecture: `product/` backend
 
 Standard layered FastAPI app: `apps/api/<domain>/{router,service,schemas,deps}.py` per domain (`auth`,
-`members`), SQLAlchemy models in `db/models/`, async session via `db/session.py`. Domain model: a `User`
+`members`, `chat`, `documents`), SQLAlchemy models in `db/models/`, async session via `db/session.py`. Domain model: a `User`
 owns a `Family`; a `Family` has `FamilyMember`s, some of which are linked to another `User` via a
 `Connection` (pending/accepted/declined) rather than being purely dependent (e.g. a baby or elderly relative
 with no account of their own) — `members/permissions.py::can_write_member` is the one place that encodes
-"the owner manages unlinked members; a linked member manages themselves."
+"the owner manages unlinked members; a linked member manages themselves." Every member-scoped endpoint
+(chat, documents) goes through `members/permissions.py::authorize_member`.
+
+**Agent (`apps/agent/`)**: LangChain `create_agent` over a local Ollama model (OpenAI-compatible endpoint);
+`chat/service.py` calls it with `config={"configurable": {"member_id": ...}}` and tools read the member via
+`tools/context.py::member_id_from(config)` — never from LLM arguments, so a prompt can't reach another
+member's data. `propose_*` tools only write rows with `confirmed_at=None` (user must confirm). The chat
+service prepends the member profile as a system message and appends sources if the model forgets to cite.
+`vision_extract_tool` reads an uploaded `Document` with three independent readers (octochains `Engine`) and
+`aggregate/consensus.py` votes per field; any disagreement → `needs_review`. Try a single image with
+`python -m product.apps.agent.tools.vision_extract_tool.try_image <path>` (~3–4 min on CPU).

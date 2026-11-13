@@ -16,4 +16,5 @@ async def web_search_tool(query: str) -> str:
     results = res.get("results", [])
     if not results:
         return "Không tìm thấy kết quả từ các nguồn uy tín."
-    return "\n\n".join(f"{r['title']} — {r['url']}\n{r['content'][:500]}" for r in results)
+    return "\n\n".join(f"[{i}] Nguồn: {r['title']} — {r['url']}\n{r['content'][:500]}"
+                       for i, r in enumerate(results, 1))

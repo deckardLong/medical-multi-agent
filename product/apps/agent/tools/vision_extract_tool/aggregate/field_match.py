@@ -33,8 +33,14 @@ def drug_key(s: str | None) -> str | None:
     return _FORM_PREFIX.sub("", t).strip() or t
 
 
+def _marker_tokens(key: str) -> set[str]:
+    # Token ngắn/có số phân biệt thuốc khác nhau dù tên gần giống: "vitamin c" ≠ "vitamin d", "b1" ≠ "b6"
+    return {t for t in key.split() if len(t) <= 2 or any(ch.isdigit() for ch in t)}
+
+
 def same_drug(a: str, b: str) -> bool:
-    return fuzz.ratio(drug_key(a) or "", drug_key(b) or "") >= CLUSTER_THRESHOLD
+    ka, kb = drug_key(a) or "", drug_key(b) or ""
+    return _marker_tokens(ka) == _marker_tokens(kb) and fuzz.ratio(ka, kb) >= CLUSTER_THRESHOLD
 
 
 def vote(values: list[str | None], norm=norm_text) -> dict:

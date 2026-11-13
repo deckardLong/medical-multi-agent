@@ -13,5 +13,7 @@ class ProductEnv(BaseSettings):
 
     tavily_api_key: str = ""
     vlm_model: str = "qwen2.5vl:7b"
+    # Model VLM cho agent vlm_transcribe; nên khác vlm_model để 2 lần đọc không sai cùng kiểu. Trống = dùng vlm_model
+    vlm_transcribe_model: str | None = None
     storage_dir: str = "storage"
     timezone: str = "Asia/Ho_Chi_Minh"

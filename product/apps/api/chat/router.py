@@ -12,7 +12,7 @@ router = APIRouter(prefix="/members/{member_id}/chat", tags=["chat"])
 async def send(member_id: UUID, data: SendMessageIn, user=Depends(get_current_user),
               session: AsyncSession = Depends(get_session)):
     try:
-        return await service.send_message(session, member_id, data.content, user)
+        return await service.send_message(session, member_id, data.content, user, data.document_ids)
     except ValueError as e:
         raise HTTPException(status.HTTP_404_NOT_FOUND, str(e))
     except PermissionError as e:
