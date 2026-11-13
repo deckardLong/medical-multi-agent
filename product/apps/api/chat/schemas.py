@@ -10,4 +10,5 @@ class ChatMessageOut(BaseModel):
     id: UUID
     role: MessageRole
     content: str
+    attachments: list[UUID] | None = None
     model_config = {"from_attributes": True}

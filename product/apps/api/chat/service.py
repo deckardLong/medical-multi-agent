@@ -4,8 +4,8 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from langchain_core.messages import ToolMessage
-from product.db.models import ChatSession, ChatMessage, Document, MessageRole, User
-from product.apps.api.members.permissions import authorize_member
+from product.db.models import ChatSession, ChatMessage, Document, MessageRole
+from product.apps.api.records.service import UNRESOLVED, propose_from_extraction
 from product.apps.agent.graph import agent
 from product.apps.agent.tools.member_profile_tool import member_allergies, member_profile_text
 from product.apps.agent.tools.vision_extract_tool import render_summary, run_engine
@@ -46,15 +46,27 @@ async def _load_attachments(session: AsyncSession, member_id: UUID, document_ids
 
 async def _read_attachments(session: AsyncSession, docs: list[Document]) -> tuple[str, str]:
     """Đọc ảnh ngay tại service: để model tự quyết thì nó có thể lặp lại kết quả cũ trong lịch sử mà không đọc ảnh mới.
-    Trả về (bản cho model, bản hiển thị nguyên văn cho người dùng)."""
+    Mỗi thuốc đọc được thành một đề xuất hồ sơ chờ xác nhận. Trả về (bản cho model, bản hiển thị cho người dùng)."""
     for_model, for_user = [], []
     for doc in docs:
         result = await asyncio.to_thread(run_engine, doc.storage_path)
         doc.extracted_json = result
-        for_model.append(f"Tài liệu {doc.id}:\n{render_summary(result)}")
-        for_user.append(render_summary(result, for_user=True))
+        proposals = await propose_from_extraction(session, doc, result)
+        note = ""
+        if proposals:
+            flagged = sum(1 for p in proposals if UNRESOLVED in str(p.payload))
+            note = (f"\nĐã tạo {len(proposals)} đề xuất thuốc trong mục Hồ sơ chờ xác nhận"
+                    + (f" ({flagged} mục có trường {UNRESOLVED}: phải sửa đúng giá trị trước khi xác nhận)" if flagged
+                       else "") + ". Hồ sơ chỉ có hiệu lực sau khi bạn bấm \"Xác nhận\".")
+        for_model.append(f"Tài liệu {doc.id}:\n{render_summary(result)}{note}")
+        for_user.append(render_summary(result, for_user=True) + note)
     await session.commit()
     return "\n\n".join(for_model), "\n\n".join(for_user)
+
+
+def _for_agent(m: ChatMessage) -> tuple[str, str]:
+    note = "".join(f"\n[Người dùng đính kèm tài liệu, document_id: {d}]" for d in m.attachments or [])
+    return m.role.value, m.content + note
 
 
 _URL = re.compile(r"https?://[^\s)\]>*]+")
@@ -110,13 +122,13 @@ def _with_allergy_warning(reply: str, messages: list, allergies: list[str], had_
     return f"{reply}\n\n{warning}"
 
 
-async def send_message(session: AsyncSession, member_id: UUID, content: str, user: User,
+async def send_message(session: AsyncSession, member_id: UUID, content: str,
                        document_ids: list[UUID] | None = None) -> ChatMessage:
-    await authorize_member(session, member_id, user)
+    """member_id đã được router kiểm tra quyền (members.deps.writable_member)."""
     docs = await _load_attachments(session, member_id, document_ids or [])
-    content += "".join(f"\n[Đính kèm tài liệu: document_id={d.id}]" for d in docs)
     chat = await get_or_create_session(session, member_id)
-    session.add(ChatMessage(session_id=chat.id, role=MessageRole.USER, content=content))
+    session.add(ChatMessage(session_id=chat.id, role=MessageRole.USER, content=content,
+                            attachments=[str(d.id) for d in docs] or None))
     await session.commit()
     attachments_text, attachments_for_user = await _read_attachments(session, docs)
 
@@ -133,7 +145,7 @@ async def send_message(session: AsyncSession, member_id: UUID, content: str, use
                                    "phần câu hỏi còn lại (nếu có) hoặc nhắc người dùng xác nhận các mục cần chọn, "
                                    f"ngắn gọn:\n{attachments_text}"))
     # Lượt có đính kèm chỉ hỏi về tài liệu mới: bỏ lịch sử để model không chép kết quả đọc đơn cũ
-    messages += [(m.role.value, m.content) for m in (history[-1:] if docs else history)]
+    messages += [_for_agent(m) for m in (history[-1:] if docs else history)]
 
     result = await agent.ainvoke({"messages": messages},
                                  config={"configurable": {"member_id": str(member_id)}})
@@ -151,8 +163,7 @@ async def send_message(session: AsyncSession, member_id: UUID, content: str, use
     return reply
 
 
-async def get_history(session: AsyncSession, member_id: UUID, user: User) -> list[ChatMessage]:
-    await authorize_member(session, member_id, user)
+async def get_history(session: AsyncSession, member_id: UUID) -> list[ChatMessage]:
     chat = await session.scalar(select(ChatSession).where(ChatSession.member_id == member_id))
     if chat is None:
         return []

@@ -49,11 +49,12 @@ async def get_member_profile(config: RunnableConfig) -> str:
 # Propose medical record
 @tool
 async def propose_medical_record(kind: RecordKind, details: dict[str, str], config: RunnableConfig) -> str:
-    """Only write if user accept medical record suggested"""
+    """Tạo ĐỀ XUẤT một mục hồ sơ (bệnh nền, thuốc, dị ứng, xét nghiệm) từ điều người dùng nói — chưa có hiệu lực cho
+    tới khi người dùng bấm Xác nhận. Giá trị chưa chắc: ghi các khả năng kèm "(cần kiểm tra)"."""
     async with SessionLocal() as s:
         rec = MedicalRecord(member_id=member_id_from(config), kind=kind, payload=details, confirmed_at=None)
         s.add(rec)
         await s.commit()
         await s.refresh(rec)
-    return (f"Đã tạo đề xuất {rec.id} ({kind.value}: {details}). CHƯA lưu chính thức. "
-            "Hãy nói người dùng kiểm tra lại và bấm xác nhận; không được nói là đã lưu.")
+    return (f"Đã tạo đề xuất ({kind.value}: {details}). CHƯA có hiệu lực: nhắc người dùng kiểm tra và bấm \"Xác nhận\" "
+            "ở mục Hồ sơ chờ duyệt. Không nói là đã lưu, không hỏi lại trong chat có muốn lưu không.")

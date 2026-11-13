@@ -7,8 +7,7 @@ from PIL import Image, UnidentifiedImageError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from product.config import ProductEnv
-from product.db.models import Document, User
-from product.apps.api.members.permissions import authorize_member
+from product.db.models import Document
 
 MAX_BYTES = 10 * 1024 * 1024
 # Loại file xác định từ nội dung thật (Pillow), không tin Content-Type/đuôi file do client gửi
@@ -44,8 +43,8 @@ def _detect(data: bytes) -> tuple[str, str]:
     return _FORMATS[fmt]
 
 
-async def save_upload(session: AsyncSession, member_id: UUID, user: User, upload: UploadFile) -> Document:
-    await authorize_member(session, member_id, user)
+async def save_upload(session: AsyncSession, member_id: UUID, upload: UploadFile) -> Document:
+    """member_id đã được router kiểm tra quyền (members.deps.writable_member)."""
     data = await _read_limited(upload)
     ext, mime = _detect(data)
 
@@ -64,8 +63,7 @@ async def save_upload(session: AsyncSession, member_id: UUID, user: User, upload
     return doc
 
 
-async def list_documents(session: AsyncSession, member_id: UUID, user: User) -> list[Document]:
-    await authorize_member(session, member_id, user)
+async def list_documents(session: AsyncSession, member_id: UUID) -> list[Document]:
     rows = await session.scalars(
         select(Document).where(Document.member_id == member_id).order_by(Document.created_at.desc()))
     return list(rows)

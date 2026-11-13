@@ -119,12 +119,23 @@ which fetches precomputed chunks/vectors from the HF dataset repo) depend on.
 ## Architecture: `product/` backend
 
 Standard layered FastAPI app: `apps/api/<domain>/{router,service,schemas,deps}.py` per domain (`auth`,
-`members`, `chat`, `documents`), SQLAlchemy models in `db/models/`, async session via `db/session.py`. Domain model: a `User`
+`members`, `chat`, `documents`, `records`, `calendar`), SQLAlchemy models in `db/models/`, async session via `db/session.py`. Domain model: a `User`
 owns a `Family`; a `Family` has `FamilyMember`s, some of which are linked to another `User` via a
 `Connection` (pending/accepted/declined) rather than being purely dependent (e.g. a baby or elderly relative
 with no account of their own) — `members/permissions.py::can_write_member` is the one place that encodes
 "the owner manages unlinked members; a linked member manages themselves." Every member-scoped endpoint
-(chat, documents) goes through `members/permissions.py::authorize_member`.
+(`/members/{member_id}/...`) takes `members/deps.py::readable_member` / `writable_member`, which return **404**
+(not 403) both for unknown and forbidden members, and services return 404 for a `record_id`/`event_id` that
+belongs to another member — so ids of other families can't be probed. Services raise `LookupError` (404),
+`api/errors.py::ConflictError` (409) or `ValueError` (400); routers translate. Design doc:
+`07_module_records_calendar.md` (deliberately without its `/api/v1` prefix — routes stay at the root).
+
+**Proposal → confirm**: agent tools and attachment reading only create `medical_records`/`calendar_events` with
+`confirmed_at=None`; only the `.../confirm` endpoints set it, and everything used for advice reads confirmed rows
+only. Fields the image readers disagree on are written as `"a | b (cần kiểm tra)"` (`records/service.py::UNRESOLVED`,
+also used in the system prompt); `confirm` returns 409 while any field still contains it. Recurring events are one
+row with an RRULE, expanded per request by `calendar/recurrence.py` — the single place for timezone/RRULE logic,
+shared by the API and `agent/tools/calendar_tool.py`.
 
 **Agent (`apps/agent/`)**: LangChain `create_agent` over a local Ollama model (OpenAI-compatible endpoint);
 `chat/service.py` calls it with `config={"configurable": {"member_id": ...}}` and tools read the member via

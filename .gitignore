@@ -226,3 +226,5 @@ state/
 
 # Ảnh/tài liệu y tế người dùng tải lên — dữ liệu cá nhân, không bao giờ commit
 storage/
+
+07_module_records_calendar.md
