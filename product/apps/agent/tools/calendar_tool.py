@@ -36,6 +36,8 @@ async def list_upcoming_events(config: RunnableConfig, days: int = 7) -> str:
 @tool
 async def propose_calendar_event(title: str, event_type: EventType, starts_at: str, config: RunnableConfig,
                                  recurrence_rule: str | None = None) -> str:
+    """Tạo ĐỀ XUẤT lịch (lịch khám, nhắc uống thuốc, tái khám) — chưa có hiệu lực cho tới khi người dùng xác nhận.
+    starts_at theo ISO 8601 (vd 2026-11-20T08:00); recurrence_rule theo chuẩn RRULE (vd FREQ=DAILY;COUNT=7)."""
     try:
         start = datetime.fromisoformat(starts_at)
     except ValueError:

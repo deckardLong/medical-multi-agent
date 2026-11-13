@@ -8,9 +8,13 @@ from .context import member_id_from
 # Get member profile => Context for LLM suggest
 @tool
 async def get_member_profile(config: RunnableConfig) -> str:
+    """Lấy hồ sơ của thành viên đang được tư vấn: tên, quan hệ, ngày sinh và các mục y tế đã xác nhận
+    (bệnh nền, thuốc đang dùng, dị ứng, xét nghiệm). Gọi trước khi đưa ra lời khuyên cho người này."""
     member_id = member_id_from(config)
     async with SessionLocal() as s:
         member = await s.get(FamilyMember, member_id)
+        if member is None:
+            return "Không tìm thấy hồ sơ thành viên."
         records = await s.scalars(select(MedicalRecord).where(
             MedicalRecord.member_id == member_id,
             MedicalRecord.confirmed_at.is_not(None)
