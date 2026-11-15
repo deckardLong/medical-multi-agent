@@ -31,7 +31,9 @@ def validate_rule(rule: str, start: datetime) -> None:
 
 def occurrences(event: CalendarEvent, start: datetime, end: datetime) -> list[datetime]:
     """Các lần xảy ra của event trong [start, end]."""
-    first = localize(event.starts_at)
+    # DB trả về giờ UTC: phải đổi về giờ địa phương trước khi khai triển RRULE, nếu không BYDAY/BYHOUR tính theo UTC
+    # (06:00 thứ Hai giờ VN = 23:00 Chủ nhật UTC → BYDAY=MO lệch ngày)
+    first = localize(event.starts_at).astimezone(TZ)
     if not event.recurrence_rule:
         return [first] if start <= first <= end else []
     hits = []

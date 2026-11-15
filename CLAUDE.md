@@ -51,6 +51,20 @@ for the same database.
 docker-compose up -d     # qdrant on :6333, postgres on :5432 (user/pass/product)
 ```
 
+### `frontend/` (React 18 + TypeScript + Vite 4 — Node 16 on this machine, so no Vite 5+/React Router 7)
+
+```powershell
+cd frontend; npm install
+npm run dev        # http://127.0.0.1:5173 — /api/* is proxied to the FastAPI app on :8000 (no CORS setup needed)
+npm run build      # tsc --noEmit + vite build
+```
+
+Theming is an Abstract Factory (`src/theme/factory.ts`): `UIThemeFactory` → `NeonDarkFactory` / `NeonLightFactory`
+produce matching CSS-variable "skins" for Button/Card/Input/Badge; components read them via `useUI()` and never
+know the concrete theme. Factories return skins, not components, so switching theme doesn't remount the tree.
+Theme switches use the View Transitions API; animations stick to transform/opacity. Icons come from
+`lucide-react` only. Pages are lazy chunks prefetched on idle (`src/pages/lazy.ts`).
+
 ### `retrieval/` + `corpus_sync/` (reference only in this sandbox — needs GPU/network elsewhere)
 
 All entry points are `python -m ...` scripts under `retrieval/` and `corpus_sync/`, configured via
@@ -135,7 +149,10 @@ belongs to another member — so ids of other families can't be probed. Services
 only. Fields the image readers disagree on are written as `"a | b (cần kiểm tra)"` (`records/service.py::UNRESOLVED`,
 also used in the system prompt); `confirm` returns 409 while any field still contains it. Recurring events are one
 row with an RRULE, expanded per request by `calendar/recurrence.py` — the single place for timezone/RRULE logic,
-shared by the API and `agent/tools/calendar_tool.py`.
+shared by the API and `agent/tools/calendar_tool.py`. Email reminders: `calendar/reminders.py::scan_and_send`
+runs every `PRODUCT_REMINDER_SCAN_INTERVAL_MINUTES` via APScheduler (started in `main.py`'s lifespan only when
+`PRODUCT_SMTP_HOST` is set); a `reminder_logs` row per (event, occurrence) — inserted with ON CONFLICT DO NOTHING
+before sending, in the same transaction — guarantees one email per occurrence even with several workers.
 
 **Agent (`apps/agent/`)**: LangChain `create_agent` over a local Ollama model (OpenAI-compatible endpoint);
 `chat/service.py` calls it with `config={"configurable": {"member_id": ...}}` and tools read the member via

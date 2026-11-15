@@ -10,7 +10,8 @@ async def create_family_with_self(session: AsyncSession, user: User) -> Family:
     family = Family(owner_user_id=user.id, name=f"Gia đình của {user.display_name}")
     session.add(family)
     await session.flush()
-    session.add(FamilyMember(family_id=family.id, member_type=MemberType.SELF, display_name=user.display_name, linked_user_id=user.id))
+    session.add(FamilyMember(family_id=family.id, member_type=MemberType.SELF, display_name=user.display_name,
+                             dob=user.date_of_birth, linked_user_id=user.id))
 
     await session.commit()
     await session.refresh(family)

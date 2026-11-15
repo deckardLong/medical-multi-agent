@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import SecretStr
 
 class ProductEnv(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_prefix="PRODUCT_", extra="ignore")
@@ -17,3 +18,13 @@ class ProductEnv(BaseSettings):
     vlm_transcribe_model: str | None = None
     storage_dir: str = "storage"
     timezone: str = "Asia/Ho_Chi_Minh"
+
+    # ======= SMTP =======
+    smtp_host: str | None = None          # None: job tự tắt, log cảnh báo — giống cách xử lý tavily_api_key
+    smtp_port: int = 587
+    smtp_user: str | None = None
+    smtp_password: SecretStr | None = None
+    smtp_from: str = "no-reply@example.com"
+
+    reminder_lead_minutes: int = 60       # nhắc trước bao nhiêu phút
+    reminder_scan_interval_minutes: int = 5

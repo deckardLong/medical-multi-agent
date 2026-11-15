@@ -1,0 +1,327 @@
+/* ---------- Button ---------- */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  box-shadow: var(--btn-shadow);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  /* chỉ transform + shadow: không đổi kích thước → không gây reflow */
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur) var(--ease-out), opacity var(--dur);
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--btn-shadow-hover);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+.block {
+  width: 100%;
+}
+.iconOnly {
+  width: 40px;
+  padding: 0;
+}
+.sm.iconOnly {
+  width: 32px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  /* 1.2s/vòng: đủ chậm để nhìn thấy chuyển động đều; linear để tốc độ không giật giữa vòng */
+  animation: spin 1.2s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  min-width: 0;
+}
+.cardTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.cardTitle h3 {
+  font-size: 17px;
+}
+
+/* ---------- Field ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.control > svg {
+  position: absolute;
+  left: 12px;
+  color: var(--input-placeholder);
+  pointer-events: none;
+}
+.input {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+.input::placeholder {
+  color: var(--input-placeholder);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--input-border-focus);
+  box-shadow: var(--input-ring);
+}
+.withIcon {
+  padding-left: 38px;
+}
+.withAction {
+  padding-right: 42px;
+}
+textarea.input {
+  height: auto;
+  min-height: 84px;
+  padding: 10px 14px;
+  resize: vertical;
+}
+select.input {
+  appearance: none;
+  padding-right: 34px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--input-placeholder) 50%),
+    linear-gradient(135deg, var(--input-placeholder) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 18px, calc(100% - 13px) 18px;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+.input[aria-invalid="true"] {
+  border-color: var(--c-danger);
+}
+.inputAction {
+  position: absolute;
+  right: 6px;
+  height: 30px;
+  width: 30px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: transparent;
+  color: var(--c-text-muted);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.inputAction:hover {
+  color: var(--c-text);
+}
+.hint {
+  font-size: 12px;
+  color: var(--c-text-muted);
+}
+.error {
+  font-size: 12px;
+  color: var(--c-danger);
+}
+
+/* ---------- Badge ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--badge-fg);
+  background: var(--badge-bg);
+  border: 1px solid var(--badge-border);
+  white-space: nowrap;
+}
+
+/* ---------- Avatar ---------- */
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--c-on-accent);
+  background: var(--fx-gradient);
+}
+
+/* ---------- Tabs (segmented) ---------- */
+.tabs {
+  display: inline-flex;
+  padding: 4px;
+  gap: 2px;
+  border-radius: 12px;
+  background: var(--c-surface2);
+  border: 1px solid var(--c-border);
+}
+.tab {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-text-muted);
+  cursor: pointer;
+  z-index: 0;
+  transition: color var(--dur);
+}
+.tabActive {
+  color: var(--c-text);
+}
+.tabPill {
+  position: absolute;
+  inset: 0;
+  border-radius: 9px;
+  background: var(--c-surface);
+  box-shadow: var(--fx-glow);
+  z-index: -1;
+}
+
+/* ---------- Empty / skeleton ---------- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 28px 12px;
+  color: var(--c-text-muted);
+}
+.empty svg {
+  color: var(--c-accent);
+  opacity: 0.8;
+}
+.skeleton {
+  border-radius: 12px;
+  background: linear-gradient(90deg, var(--c-surface2) 0%, color-mix(in srgb, var(--c-surface2) 60%, var(--c-border)) 50%, var(--c-surface2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Modal ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(5, 7, 12, 0.55);
+}
+.modal {
+  width: min(520px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  border-radius: var(--radius-lg);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  box-shadow: var(--fx-shadow), var(--fx-glow);
+  padding: 22px;
+}
+.modalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.modalHead h3 {
+  font-size: 19px;
+}
+
+/* ---------- Toast ---------- */
+.toasts {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 260px;
+  max-width: 380px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  box-shadow: var(--fx-shadow);
+  font-size: 14px;
+}
+.toastSuccess svg {
+  color: var(--c-success);
+}
+.toastError svg {
+  color: var(--c-danger);
+}
+.toast svg {
+  flex: none;
+  margin-top: 2px;
+}

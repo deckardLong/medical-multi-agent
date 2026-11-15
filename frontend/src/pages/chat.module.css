@@ -1,0 +1,305 @@
+.layout {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr) 300px;
+  gap: 16px;
+  height: calc(100vh - 28px - 68px - 14px - 44px);
+  min-height: 560px;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+.eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+}
+.doctor {
+  font-size: 30px;
+  margin: 8px 0 10px;
+}
+.disclaimer {
+  font-size: 13px;
+  color: var(--c-text-muted);
+  margin-bottom: 16px;
+}
+
+.history {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  margin: 0 -8px;
+  padding: 0 8px;
+}
+.histGroup {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  margin: 12px 0 4px;
+}
+.histItem {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 7px 8px;
+  border-radius: 10px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background var(--dur);
+}
+.histItem:hover {
+  background: var(--c-surface2);
+}
+
+/* ---------- Cột giữa ---------- */
+.chatHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.chatHead h2 {
+  font-size: 24px;
+}
+.thread {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+}
+.msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  max-width: 88%;
+}
+.msgUser {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.badgeOk {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--fx-gradient);
+  color: var(--c-on-accent);
+  box-shadow: var(--fx-glow);
+}
+.bubble {
+  padding: 11px 14px;
+  border-radius: 16px;
+  background: var(--c-surface2);
+  border: 1px solid var(--c-border);
+  font-size: 14.5px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.bubble p + p,
+.bubble p + ul,
+.bubble ul + p,
+.bubble p + ol,
+.bubble ol + p {
+  margin-top: 8px;
+}
+.bubble ul,
+.bubble ol {
+  margin: 0;
+  padding-left: 20px;
+}
+.bubbleUser {
+  background: color-mix(in srgb, var(--c-accent) 14%, var(--c-surface));
+  border-color: color-mix(in srgb, var(--c-accent) 35%, transparent);
+  white-space: pre-wrap;
+}
+.flash {
+  animation: flash 1.2s var(--ease-out);
+}
+@keyframes flash {
+  0%,
+  40% {
+    box-shadow: var(--fx-glow-strong);
+  }
+}
+.attach {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--c-text-muted);
+}
+
+.typing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--c-text-muted);
+}
+.dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  /* Chu kỳ 1.6s, các chấm lệch nhau 0.25s → một "làn sóng" chậm, dịu thay vì nhảy liên tục */
+  animation: wave 1.6s infinite cubic-bezier(0.45, 0, 0.55, 1);
+}
+.dots i:nth-child(2) {
+  animation-delay: 0.25s;
+  background: var(--c-accent2);
+}
+.dots i:nth-child(3) {
+  animation-delay: 0.5s;
+}
+@keyframes wave {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.composer {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.inputBox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 8px 8px 14px;
+  border-radius: 16px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  transition: border-color var(--dur), box-shadow var(--dur);
+}
+.inputBox:focus-within {
+  border-color: var(--c-accent);
+  box-shadow: var(--fx-focus-ring);
+}
+.inputBox textarea {
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  max-height: 160px;
+  min-height: 24px;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+.inputBox textarea::placeholder {
+  color: var(--c-text-muted);
+}
+.files {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.file {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+}
+.file img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.file button {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ---------- Cột phải ---------- */
+.profileName {
+  font-size: 22px;
+  margin-top: 12px;
+}
+.meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--c-text-muted);
+  font-size: 13px;
+  margin: 4px 0 12px;
+}
+.kv {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 7px 0;
+  border-top: 1px solid var(--c-border);
+}
+.kv span:last-child {
+  color: var(--c-text-muted);
+}
+
+@media (max-width: 1280px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+  .layout > .col:first-child {
+    display: none;
+  }
+}
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .layout > .col:last-child {
+    display: none;
+  }
+  .thread {
+    min-height: 60vh;
+  }
+}

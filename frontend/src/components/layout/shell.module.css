@@ -1,0 +1,205 @@
+.app {
+  min-height: 100vh;
+  padding: 14px;
+  background: var(--c-bg);
+}
+
+.frame {
+  min-height: calc(100vh - 28px);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  background: var(--c-frame);
+  box-shadow: var(--fx-shadow);
+  padding: 0 14px 14px;
+}
+
+/* ---------- Thanh điều hướng ---------- */
+.nav {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 10px 0 14px;
+  color: #E7EAF0;              /* khung luôn tối ở cả hai theme (theo mẫu) */
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  color: #fff;
+  margin-right: 18px;
+  text-decoration: none !important;
+}
+.logoMark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--fx-gradient);
+  color: #07131C;
+  box-shadow: 0 0 18px rgba(76, 236, 184, 0.35);
+}
+
+.links {
+  display: flex;
+  gap: 4px;
+}
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #9AA3B5;
+  text-decoration: none !important;
+  transition: color var(--dur);
+}
+.link:hover {
+  color: #fff;
+}
+.linkActive {
+  color: #fff;
+}
+.underline {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--fx-gradient);
+  box-shadow: 0 0 10px rgba(76, 236, 184, 0.7);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.04);
+  color: #E7EAF0;
+  cursor: pointer;
+  transition: background var(--dur), border-color var(--dur);
+}
+.navBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(61, 180, 254, 0.4);
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 6px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  color: #E7EAF0;
+  text-align: left;
+}
+.account small {
+  display: block;
+  font-size: 12px;
+  color: #8B94A7;
+}
+.account strong {
+  font-size: 13px;
+  display: block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Popover dùng chung (chọn thành viên, menu tài khoản) ---------- */
+.popWrap {
+  position: relative;
+}
+.pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  min-width: 240px;
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  box-shadow: var(--fx-shadow), var(--fx-glow);
+  color: var(--c-text);
+  transform-origin: top right;
+}
+.popItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 11px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+}
+.popItem:hover,
+.popItemActive {
+  background: var(--c-surface2);
+}
+.popItem small {
+  display: block;
+  color: var(--c-text-muted);
+  font-size: 12px;
+}
+.popDivider {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--c-border);
+}
+
+/* ---------- Vùng nội dung ---------- */
+.content {
+  flex: 1;
+  position: relative;
+  border-radius: calc(var(--radius-xl) - 6px);
+  background: var(--c-bg);
+  overflow: hidden;
+}
+:global([data-theme="light"]) .content {
+  background: #F7F8F7;
+}
+.page {
+  height: 100%;
+  padding: 22px;
+}
+
+@media (max-width: 900px) {
+  .linkLabel {
+    display: none;
+  }
+  .account small,
+  .account strong {
+    display: none;
+  }
+  .nav {
+    gap: 10px;
+  }
+}

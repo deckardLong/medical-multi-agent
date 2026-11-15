@@ -12,12 +12,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 async def register(data: RegisterIn, session: AsyncSession = Depends(get_session)):
     try:
-        user = await service.register(session, data)
+        return await service.register(session, data)
     except ValueError as e:
         raise HTTPException(status.HTTP_409_CONFLICT, str(e))
-    from product.apps.api.members import service as members_service
-    await members_service.create_family_with_self(session, user)
-    return user
 
 # Login
 @router.post("/login", response_model=TokenOut)

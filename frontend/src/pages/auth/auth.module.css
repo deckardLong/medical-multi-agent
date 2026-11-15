@@ -1,0 +1,252 @@
+/* Bố cục theo Figma "Desktop sign up and login pages": form trái (404px, lệch ~10%), khối hình phải bo góc trái 45px */
+.page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr);
+  background: var(--c-bg);
+}
+
+.formSide {
+  display: flex;
+  align-items: center;
+  padding: 48px 24px 48px calc(10% + 21px);
+  overflow: hidden;
+}
+
+.formWrap {
+  width: 100%;
+  max-width: 404px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 40px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+}
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--fx-gradient);
+  color: var(--c-on-accent);
+  box-shadow: var(--fx-glow);
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 600;
+}
+.subtitle {
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--c-text-muted);
+}
+
+.form {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+.check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--c-accent);
+  margin: 0;
+}
+
+.formError {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--c-danger);
+  background: color-mix(in srgb, var(--c-danger) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-danger) 30%, transparent);
+}
+
+.switch {
+  margin-top: 26px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--c-text-muted);
+}
+.switch a {
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.strength {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+.strength span {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--c-border);
+  transition: background var(--dur);
+}
+
+/* ---------- Khối hình bên phải ---------- */
+.visual {
+  position: relative;
+  overflow: hidden;
+  border-radius: 45px 0 0 45px;
+  background: #0A0E17;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  padding: 56px;
+  color: #EEF1F6;
+}
+.grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(rgba(61, 180, 254, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61, 180, 254, 0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 60% 40%, #000 30%, transparent 75%);
+}
+.blob {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.75;
+  will-change: transform;
+  /* chỉ animate transform → chạy trên compositor, không tốn CPU vẽ lại */
+  animation: float 14s ease-in-out infinite alternate;
+}
+.blobA {
+  width: 420px;
+  height: 420px;
+  top: 8%;
+  left: 12%;
+  background: #3DB4FE;
+}
+.blobB {
+  width: 360px;
+  height: 360px;
+  top: 34%;
+  right: -60px;
+  background: #4CECB8;
+  animation-delay: -5s;
+}
+.blobC {
+  width: 220px;
+  height: 220px;
+  top: 4%;
+  right: 22%;
+  background: #FF4FD8;
+  opacity: 0.35;
+  animation-delay: -9s;
+}
+@keyframes float {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(40px, -30px, 0) scale(1.08);
+  }
+}
+
+.pulse {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  translate: -50% 0;
+  width: 220px;
+  height: 220px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(10, 14, 23, 0.55);
+  border: 1px solid rgba(76, 236, 184, 0.35);
+  box-shadow: 0 0 60px rgba(76, 236, 184, 0.25), inset 0 0 40px rgba(61, 180, 254, 0.2);
+  color: #4CECB8;
+}
+
+.visualCopy h2 {
+  font-size: clamp(28px, 2.6vw, 40px);
+  font-weight: 700;
+  max-width: 520px;
+}
+.visualCopy p {
+  margin-top: 12px;
+  max-width: 460px;
+  color: #A9B3C6;
+}
+.features {
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #D6DCE8;
+}
+.features li span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(61, 180, 254, 0.14);
+  border: 1px solid rgba(61, 180, 254, 0.3);
+  color: #3DB4FE;
+  flex: none;
+}
+
+.themeBtn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+}
+
+@media (max-width: 960px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+  .visual {
+    display: none;
+  }
+  .formSide {
+    padding: 40px 20px;
+    justify-content: center;
+  }
+}
