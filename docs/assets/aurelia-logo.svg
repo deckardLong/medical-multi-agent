@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 660" width="640" height="660" role="img" aria-labelledby="t d">
+  <title id="t">AURELIA</title>
+  <desc id="d">Sứa mặt trăng neon: 4 vòng tròn xếp thành dấu cộng y tế, 3 xúc tu chính (3 lần đọc song song); dưới tên là một nhịp tim.</desc>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3DB4FE"/>
+      <stop offset="1" stop-color="#4CECB8"/>
+    </linearGradient>
+    <linearGradient id="gv" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3DB4FE"/>
+      <stop offset="1" stop-color="#4CECB8" stop-opacity="0.15"/>
+    </linearGradient>
+    <radialGradient id="bellFill" cx="0.5" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#4CECB8" stop-opacity="0.35"/>
+      <stop offset="0.6" stop-color="#3DB4FE" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#3DB4FE" stop-opacity="0.04"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#3DB4FE" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#3DB4FE" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- quầng sáng phía sau -->
+  <ellipse cx="320" cy="210" rx="210" ry="160" fill="url(#halo)"/>
+
+  <g filter="url(#glow)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- xúc tu mảnh hai bên -->
+    <g stroke="url(#gv)" stroke-width="4" opacity="0.8">
+      <path d="M196 262 C186 296 206 320 192 350 C182 374 198 396 188 420"/>
+      <path d="M228 270 C220 306 240 330 228 364 C220 388 234 410 226 436"/>
+      <path d="M412 270 C420 306 400 330 412 364 C420 388 406 410 414 436"/>
+      <path d="M444 262 C454 296 434 320 448 350 C458 374 442 396 452 420"/>
+    </g>
+
+    <!-- 3 xúc tu chính = 3 lần đọc độc lập chạy song song -->
+    <g stroke="url(#gv)" stroke-width="10">
+      <path d="M276 276 C262 314 288 340 272 378 C260 408 280 436 268 470"/>
+      <path d="M320 282 C306 322 334 350 318 390 C306 422 330 452 318 486"/>
+      <path d="M364 276 C378 314 352 340 368 378 C380 408 360 436 372 470"/>
+    </g>
+
+    <!-- chuông sứa, mép dưới lượn sóng -->
+    <path d="M168 250
+             C168 108 472 108 472 250
+             C460 262 448 262 436 252
+             C424 264 412 264 400 254
+             C388 266 376 266 364 256
+             C352 268 340 268 320 258
+             C300 268 288 268 276 256
+             C264 266 252 266 240 254
+             C228 264 216 264 204 252
+             C192 262 180 262 168 250 Z"
+          fill="url(#bellFill)" stroke="url(#g)" stroke-width="6"/>
+
+    <!-- 4 vòng tròn (đặc trưng sứa mặt trăng) xếp thành dấu cộng y tế -->
+    <g stroke="#4CECB8" stroke-width="5">
+      <circle cx="320" cy="166" r="17"/>
+      <circle cx="349" cy="196" r="17"/>
+      <circle cx="320" cy="226" r="17"/>
+      <circle cx="291" cy="196" r="17"/>
+    </g>
+  </g>
+
+  <!-- ánh sáng trên đỉnh chuông (nằm trong lòng chuông) -->
+  <path d="M206 226 C210 196 230 172 262 158" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="5"
+        stroke-linecap="round" fill="none"/>
+
+  <!-- wordmark -->
+  <text x="320" y="560" text-anchor="middle" fill="url(#g)"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="64" font-weight="700"
+        letter-spacing="14">AURELIA</text>
+
+  <!-- nhịp tim: phẳng — sóng P — phức bộ QRS — phẳng -->
+  <path d="M150 600 H276 Q284 590 292 600 H300 L308 606 L318 575 L330 624 L340 600 H352 Q364 588 376 600 H490"
+        stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#glow)"/>
+
+  <text x="320" y="646" text-anchor="middle" fill="#8B94A7"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600"
+        letter-spacing="4">EVIDENCE-BASED FAMILY HEALTH</text>
+</svg>

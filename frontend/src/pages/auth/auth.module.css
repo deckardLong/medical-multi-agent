@@ -27,15 +27,25 @@
   font-weight: 700;
   font-size: 20px;
 }
+.brand {
+  letter-spacing: 0.14em;
+}
 .brandMark {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 11px;
-  background: var(--fx-gradient);
-  color: var(--c-on-accent);
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #0B0D12;
+  border: 1px solid rgba(76, 236, 184, 0.3);
   box-shadow: var(--fx-glow);
+}
+.fullName {
+  font-size: 12px !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #4CECB8 !important;
+  margin: 0 0 14px !important;
 }
 
 .title {

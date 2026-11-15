@@ -1,12 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  ArrowRight, Bot, CircleAlert, FileImage, Hourglass, ImagePlus, MessageSquareText, Paperclip, SendHorizontal,
+  ArrowRight, CircleAlert, FileImage, Hourglass, ImagePlus, MessageSquareText, Paperclip, SendHorizontal,
   ShieldAlert, Sparkles, X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Badge, Button, Card, Empty, Skeleton } from "../components/ui";
 import { Markdown } from "../components/Markdown";
+import { AureliaMark } from "../components/AureliaMark";
 import { calendar, chat, dashboard, documents, records } from "../api/endpoints";
 import type { ChatMessage } from "../api/types";
 import { useMembers } from "../state/MemberContext";
@@ -146,10 +147,11 @@ export default function ChatPage() {
       {/* ---------- Cột trái ---------- */}
       <div className={s.col}>
         <Card>
-          <div className={s.eyebrow}><span>Trợ lý AI của bạn</span><Badge tone="info">Qwen 2.5</Badge></div>
-          <h2 className={s.doctor}>Bác sĩ gia đình</h2>
+          <div className={s.eyebrow}><span>Trợ lý của bạn</span><Badge tone="info">Qwen 2.5</Badge></div>
+          <h2 className={`${s.doctor} gradient-text`}>AURELIA</h2>
+          <p className={s.fullName}>Assisted Understanding &amp; Reasoning for Evidence-based Life &amp; Integrated Assistance</p>
           <p className={s.disclaimer}>
-            Trợ lý không thay thế bác sĩ. Hãy hỏi ý kiến chuyên gia y tế trước khi dùng thuốc; tự điều trị có thể
+            AURELIA không thay thế bác sĩ. Hãy hỏi ý kiến chuyên gia y tế trước khi dùng thuốc; tự điều trị có thể
             gây hại cho sức khoẻ.
           </p>
           <Button variant="primary" block icon={ImagePlus} onClick={() => fileRef.current?.click()}>Gửi ảnh đơn thuốc</Button>
@@ -168,7 +170,7 @@ export default function ChatPage() {
       {/* ---------- Cột giữa ---------- */}
       <div className={s.col}>
         <div className={s.chatHead}>
-          <h2>Trò chuyện với trợ lý</h2>
+          <h2>Trò chuyện với AURELIA</h2>
           <Badge tone="success">Đang hỏi cho: {current.display_name}</Badge>
         </div>
 
@@ -177,7 +179,7 @@ export default function ChatPage() {
           {history.loading && !history.data && <><Skeleton h={60} w="70%" /><Skeleton h={90} w="80%" style={{ alignSelf: "flex-end" }} /></>}
           {history.data && !messages.length && !sending && (
             <Empty icon={Sparkles} title={`Bắt đầu hỏi về sức khoẻ của ${current.display_name}`}>
-              Ví dụ: "Bé bị sốt 38.5 độ nên làm gì?", hoặc gửi ảnh đơn thuốc để trợ lý đọc và tạo đề xuất hồ sơ.
+              Ví dụ: "Bé bị sốt 38.5 độ nên làm gì?", hoặc gửi ảnh đơn thuốc để AURELIA đọc và tạo đề xuất hồ sơ.
             </Empty>
           )}
           <AnimatePresence initial={false}>
@@ -185,7 +187,8 @@ export default function ChatPage() {
               <motion.div key={m.id} id={`msg-${m.id}`} className={`${s.msg} ${m.role === "user" ? s.msgUser : ""}`}
                           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}>
-                {m.role === "user" ? <Avatar name={current.display_name} size={34} /> : <span className={s.badgeOk}><Bot size={18} /></span>}
+                {m.role === "user" ? <Avatar name={current.display_name} size={34} />
+                  : <span className={s.badgeOk} title="AURELIA"><AureliaMark size={24} mono /></span>}
                 <div className={`${s.bubble} ${m.role === "user" ? s.bubbleUser : ""}`}>
                   {m.role === "assistant" ? <Markdown text={m.content} /> : m.content}
                   {!!m.attachments?.length && (
@@ -197,9 +200,9 @@ export default function ChatPage() {
           </AnimatePresence>
           {sending && (
             <motion.div className={s.typing} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <span className={s.badgeOk}><Bot size={18} /></span>
+              <span className={s.badgeOk}><AureliaMark size={24} mono /></span>
               <span className={s.dots}><i /><i /><i /></span>
-              Trợ lý đang soạn trả lời · {elapsed}s
+              AURELIA đang soạn trả lời · {elapsed}s
               {elapsed > 20 && <span>(chạy trên CPU, đọc ảnh đơn thuốc có thể mất 3–5 phút)</span>}
             </motion.div>
           )}
@@ -258,7 +261,7 @@ export default function ChatPage() {
             <span style={{ fontFamily: "var(--font-body)", fontVariantNumeric: "tabular-nums" }}>{pending.data ?? 0}</span> đề xuất
           </h3>
           <p style={{ fontSize: 13, opacity: 0.85, marginBottom: 14 }}>
-            Trợ lý chỉ tạo đề xuất. Hồ sơ và lịch chỉ có hiệu lực khi bạn xác nhận.
+            AURELIA chỉ tạo đề xuất. Hồ sơ và lịch chỉ có hiệu lực khi bạn xác nhận.
           </p>
           <Button block icon={ArrowRight} onClick={() => navigate("/records")}>Xem đề xuất</Button>
         </Card>

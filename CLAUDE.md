@@ -10,7 +10,8 @@ Two largely independent subsystems share this repo:
    retrieval pipeline built for a retrieval competition (code/comments refer to the organizers as "BTC").
    Chunking → embedding (BGE-M3 dense+sparse) → Qdrant indexing → hybrid search → rerank → doc/chunk
    selection → submission file.
-2. **`product/`** — a separate FastAPI backend ("Family Health Assistant"): users, families, family
+2. **`product/`** — a separate FastAPI backend for **AURELIA** (the family health assistant; name/expansion live in
+   the system prompt, frontend `AureliaMark` + `docs/assets/aurelia-logo.svg`): users, families, family
    members, connections, JWT auth, async SQLAlchemy/Postgres, plus an LLM agent (`product/apps/agent/`)
    whose `medical_retrieval_tool` imports `retrieval/` + `common/` to search the Qdrant collection.
 

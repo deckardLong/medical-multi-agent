@@ -29,20 +29,22 @@
   gap: 10px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 19px;
+  font-size: 18px;
+  letter-spacing: 0.14em;
   color: #fff;
   margin-right: 18px;
   text-decoration: none !important;
 }
+/* Sứa đã có gradient riêng → ô logo nền tối, viền mint để linh vật nổi lên thay vì chìm vào nền gradient */
 .logoMark {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: var(--fx-gradient);
-  color: #07131C;
-  box-shadow: 0 0 18px rgba(76, 236, 184, 0.35);
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: #0B0D12;
+  border: 1px solid rgba(76, 236, 184, 0.3);
+  box-shadow: 0 0 16px rgba(76, 236, 184, 0.22);
 }
 
 .links {

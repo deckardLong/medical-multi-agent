@@ -1,19 +1,53 @@
-# Family Health Assistant — Multilingual Medical RAG
+# AURELIA
 
-Trợ lý sức khoẻ gia đình. Trợ lý AI trả lời câu hỏi y khoa bằng cách tra cứu kho tài liệu y tế đa ngôn ngữ
+<p align="center">
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python 3.12"></a>
+  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-0.162-009688?logo=fastapi&logoColor=white" alt="FastAPI"></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black" alt="React 18"></a>
+  <a href="https://qdrant.tech/"><img src="https://img.shields.io/badge/Qdrant-hybrid%20search-DC244C" alt="Qdrant"></a>
+  <a href="https://ollama.com/"><img src="https://img.shields.io/badge/Ollama-local%20LLM-000000?logo=ollama&logoColor=white" alt="Ollama"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-4CECB8" alt="License MIT"></a>
+</p>
+
+<p align="center">
+  <img src="docs/assets/aurelia-logo.svg" alt="AURELIA" width="360">
+</p>
+
+<p align="center">
+  <b>A</b>ssisted <b>U</b>nderstanding &amp; <b>R</b>easoning for <b>E</b>vidence-based <b>L</b>ife &amp; <b>I</b>ntegrated <b>A</b>ssistance
+</p>
+
+**AURELIA** là trợ lý sức khoẻ gia đình. AURELIA trả lời câu hỏi y khoa bằng cách tra cứu kho tài liệu y tế đa ngôn ngữ
 (tiếng Việt, tiếng Trung). Kho được tìm kiếm bằng hybrid search (dense + sparse) trên Qdrant. Hệ thống quản lý
 hồ sơ và lịch khám cho từng thành viên trong gia đình, đọc ảnh đơn thuốc, và gửi email nhắc lịch.
 
 **Chức năng chính**
 
-- **Chat với trợ lý AI**: câu trả lời có dẫn nguồn từ kho tài liệu. Kho không có thì tìm trên các trang y tế uy tín.
-- **Đọc ảnh đơn thuốc**: 3 lần đọc độc lập rồi đối chiếu từng trường. Trường nào các lần đọc không khớp sẽ được
+- **Chat với AURELIA**: câu trả lời có dẫn nguồn từ kho tài liệu. Kho không có thì tìm trên các trang y tế uy tín.
+- **Đọc ảnh đơn thuốc**: 3 agent đọc ảnh **chạy song song** bằng [octochains](https://pypi.org/project/octochains/),
+  mỗi agent dùng một model khác nhau, rồi đối chiếu từng trường. Trường nào các lần đọc không khớp sẽ được
   đánh dấu để người dùng tự chọn.
 - **Hồ sơ và lịch theo mô hình đề xuất → xác nhận**: AI chỉ tạo đề xuất. Dữ liệu chỉ có hiệu lực, và chỉ được
   dùng để tư vấn, sau khi người dùng xác nhận.
 - **Nhắc lịch khám và uống thuốc qua email**, hỗ trợ lịch lặp theo chuẩn RRULE.
 - **Phân quyền theo gia đình**: chủ gia đình quản lý thành viên chưa có tài khoản (con nhỏ, ông bà...). Thành
   viên đã liên kết tài khoản thì tự quản lý hồ sơ của mình.
+
+### Các model sử dụng
+
+Mọi model đều chạy local, không gửi dữ liệu sức khoẻ ra dịch vụ AI bên ngoài.
+
+| Model | Chạy bằng | Vai trò |
+|---|---|---|
+| `qwen2.5:7b-instruct` | Ollama | Model chat chính của AURELIA: gọi tool, soạn câu trả lời. Đồng thời chuyển văn bản thô thành JSON cho agent 2 và 3 |
+| `qwen2.5vl:7b` | Ollama | **Agent 1** `vlm_direct`: nhìn ảnh, đọc thẳng ra JSON đơn thuốc |
+| PaddleOCR (PP-OCRv6) | Python | **Agent 2** `ocr_then_llm`: nhận dạng chữ, sau đó qwen2.5 cấu trúc lại |
+| `gemma3:4b` | Ollama | **Agent 3** `vlm_transcribe`: chép nguyên văn chữ trong ảnh, sau đó qwen2.5 cấu trúc lại |
+| BGE-M3 | FlagEmbedding | Mã hoá câu hỏi và tài liệu thành vector dense + sparse cho hybrid search |
+
+Agent 1 dùng Qwen, còn agent 3 dùng Gemma: hai model thuộc hai họ khác nhau nên nếu đọc sai thì thường sai theo
+những kiểu khác nhau. Nhờ vậy, một tên thuốc đọc nhầm không thể được "xác nhận" chỉ vì hai lần đọc cùng nhầm
+giống nhau. Agent 3 đổi model qua biến `PRODUCT_VLM_TRANSCRIBE_MODEL`.
 
 ---
 

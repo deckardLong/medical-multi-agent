@@ -75,7 +75,7 @@ export default function DashboardPage() {
   const [adding, setAdding] = useState(false);
 
   const stats = data && [
-    { icon: MessageSquareText, value: data.summary.consultations_this_month, label: "Lượt hỏi trợ lý tháng này", to: "/chat" },
+    { icon: MessageSquareText, value: data.summary.consultations_this_month, label: "Lượt hỏi AURELIA tháng này", to: "/chat" },
     { icon: FileText, value: data.summary.documents_total, label: "Tài liệu đã tải lên", to: "/records" },
     { icon: CalendarClock, value: data.summary.upcoming_7d, label: "Lịch trong 7 ngày tới", to: "/calendar" },
     { icon: Hourglass, value: data.summary.pending_confirmations, label: "Đề xuất chờ xác nhận", to: "/records",
@@ -91,7 +91,7 @@ export default function DashboardPage() {
         </div>
         <div className={s.actions}>
           <Button icon={UserPlus} onClick={() => setAdding(true)}>Thêm thành viên</Button>
-          <Button variant="primary" icon={Sparkles} onClick={() => navigate("/chat")}>Hỏi trợ lý</Button>
+          <Button variant="primary" icon={Sparkles} onClick={() => navigate("/chat")}>Hỏi AURELIA</Button>
         </div>
       </div>
 

@@ -42,8 +42,8 @@ async def send_reminder_email(to: str, member_name: str, title: str, when: datet
     msg = EmailMessage()
     msg["From"] = env.smtp_from
     msg["To"] = to
-    msg["Subject"] = f"Nhắc lịch cho {member_name}: {title}"
+    msg["Subject"] = f"[AURELIA] Nhắc lịch cho {member_name}: {title}"
     # Giờ đọc từ DB là UTC; phải đổi về giờ địa phương, nếu không lịch 08:00 sẽ hiện "01:00"
     msg.set_content(f"{member_name} có lịch \"{title}\" vào {when.astimezone(TZ):%H:%M %d/%m/%Y}.\n\n"
-                    "Đây là email tự động từ hệ thống trợ lý y tế gia đình.")
+                    "Đây là email tự động từ AURELIA — trợ lý sức khoẻ gia đình của bạn.")
     await asyncio.to_thread(_send_sync, msg)

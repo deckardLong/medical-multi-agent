@@ -169,7 +169,7 @@ export default function CalendarPage() {
           {occ.error && <Empty icon={CircleAlert} title="Không tải được lịch">{occ.error}</Empty>}
           {occ.loading && !occ.data ? <Skeleton h={220} /> : !groups.length ? (
             <Empty icon={CalendarCheck2} title={`Không có lịch trong ${range} ngày tới`}>
-              Bấm "Tạo lịch" hoặc nhờ trợ lý AI đặt lịch nhắc uống thuốc.
+              Bấm "Tạo lịch" hoặc nhờ AURELIA đặt lịch nhắc uống thuốc.
             </Empty>
           ) : (
             <motion.div layout>
@@ -200,7 +200,7 @@ export default function CalendarPage() {
 
         <Card title="Chờ xác nhận" action={pending.data && <Badge tone={pending.data.length ? "warning" : "neutral"}>{pending.data.length}</Badge>}>
           <p className="muted" style={{ fontSize: 13, marginBottom: 10 }}>
-            Lịch do trợ lý AI đề xuất chỉ có hiệu lực (và chỉ được nhắc qua email) sau khi bạn xác nhận.
+            Lịch do AURELIA đề xuất chỉ có hiệu lực (và chỉ được nhắc qua email) sau khi bạn xác nhận.
           </p>
           {pending.loading && !pending.data ? <Skeleton h={120} /> : !pending.data?.length ? (
             <Empty icon={Check} title="Không có đề xuất nào" />

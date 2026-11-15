@@ -25,6 +25,17 @@
   font-size: 30px;
   margin: 8px 0 10px;
 }
+.doctor.doctor {
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+.fullName {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-accent2);
+  margin-bottom: 12px;
+}
 .disclaimer {
   font-size: 13px;
   color: var(--c-text-muted);

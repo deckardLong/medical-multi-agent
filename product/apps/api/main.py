@@ -33,7 +33,8 @@ async def lifespan(_: FastAPI):
         scheduler.shutdown(wait=False)
 
 
-app = FastAPI(title="Family Health Assistant API", lifespan=lifespan)
+app = FastAPI(title="AURELIA API", description="Trợ lý sức khoẻ gia đình — Assisted Understanding & Reasoning "
+              "for Evidence-based Life & Integrated Assistance", lifespan=lifespan)
 app.include_router(auth_router)
 app.include_router(members_router)
 app.include_router(chat_router)

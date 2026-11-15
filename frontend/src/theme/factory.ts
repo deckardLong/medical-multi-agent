@@ -233,7 +233,8 @@ export const themeFactories: Record<ThemeName, UIThemeFactory> = {
 /** Biến bảng màu + hiệu ứng thành biến CSS toàn cục (một lần ghi cho cả trang khi đổi theme). */
 export function globalVars(f: UIThemeFactory): Record<string, string> {
   const p = f.createPalette(), e = f.createEffects();
-  const kebab = (k: string) => k.replace(/[A-Z0-9]/g, (c) => `-${c.toLowerCase()}`);
+  // Chỉ tách chữ hoa: "textMuted" → "text-muted" nhưng "surface2" giữ nguyên "surface2" (CSS dùng var(--c-surface2))
+  const kebab = (k: string) => k.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
   const vars: Record<string, string> = {};
   for (const [k, v] of Object.entries(p)) vars[`--c-${kebab(k)}`] = v;
   for (const [k, v] of Object.entries(e)) vars[`--fx-${kebab(k)}`] = v;

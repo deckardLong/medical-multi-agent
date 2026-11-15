@@ -1,8 +1,9 @@
 import { Suspense, useEffect } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
-  CalendarDays, Check, ChevronDown, ClipboardList, HeartPulse, LayoutDashboard, LogOut, Moon, Sparkles, Sun, Users,
+  CalendarDays, Check, ChevronDown, ClipboardList, LayoutDashboard, LogOut, Moon, Sparkles, Sun, Users,
 } from "lucide-react";
+import { AureliaMark } from "../AureliaMark";
 import { Link, NavLink, Navigate, useLocation, useOutlet } from "react-router-dom";
 import { Avatar, Skeleton } from "../ui";
 import { Popover } from "./Popover";
@@ -15,7 +16,7 @@ import s from "./shell.module.css";
 
 const NAV = [
   { to: "/", label: "Tổng quan", icon: LayoutDashboard },
-  { to: "/chat", label: "Trợ lý AI", icon: Sparkles },
+  { to: "/chat", label: "AURELIA", icon: Sparkles },
   { to: "/calendar", label: "Lịch", icon: CalendarDays },
   { to: "/records", label: "Hồ sơ", icon: ClipboardList },
 ];
@@ -117,7 +118,10 @@ export default function AppShell() {
       <div className={s.app}>
         <div className={s.frame}>
           <header className={s.nav}>
-            <Link to="/" className={s.logo}><span className={s.logoMark}><HeartPulse size={18} /></span>Family Health</Link>
+            <Link to="/" className={s.logo} aria-label="AURELIA — về trang tổng quan">
+              <span className={s.logoMark}><AureliaMark size={26} /></span>
+              <span className="gradient-text">AURELIA</span>
+            </Link>
             <nav className={s.links} aria-label="Điều hướng chính">
               {NAV.map(({ to, label, icon: Icon }) => (
                 <NavLink key={to} to={to} end={to === "/"} className={({ isActive }) => `${s.link} ${isActive ? s.linkActive : ""}`}>

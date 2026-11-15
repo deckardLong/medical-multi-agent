@@ -196,7 +196,7 @@ export default function RecordsPage() {
     setUploading(true);
     try {
       await documents.upload(memberId, file);
-      toast.success("Đã tải ảnh lên. Gửi kèm ảnh trong mục Trợ lý AI để đọc đơn.");
+      toast.success("Đã tải ảnh lên. Gửi kèm ảnh khi chat với AURELIA để đọc đơn.");
       docs.reload();
     } catch (err) {
       toast.error((err as Error).message);
@@ -212,7 +212,7 @@ export default function RecordsPage() {
       <div className={s.head}>
         <div>
           <h1>Hồ sơ của {current.display_name}</h1>
-          <p>Chỉ những mục đã xác nhận mới được trợ lý dùng để tư vấn</p>
+          <p>Chỉ những mục đã xác nhận mới được AURELIA dùng để tư vấn</p>
         </div>
         <div className={s.actions}>
           <Tabs id="rec-status" value={status} onChange={setStatus}
@@ -227,7 +227,7 @@ export default function RecordsPage() {
           {list.loading && !list.data ? <div className={s.stack}><Skeleton h={110} /><Skeleton h={110} /></div>
             : !list.data?.length ? (
               <Empty icon={ClipboardList} title={status === "pending" ? "Không có đề xuất nào chờ xác nhận" : "Chưa có mục hồ sơ"}>
-                {status === "pending" ? "Gửi ảnh đơn thuốc cho trợ lý AI để tạo đề xuất." : "Bấm \"Thêm mục\" để tự nhập."}
+                {status === "pending" ? "Gửi ảnh đơn thuốc cho AURELIA để tạo đề xuất." : "Bấm \"Thêm mục\" để tự nhập."}
               </Empty>
             ) : (
               <div className={s.stack}>
