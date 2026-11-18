@@ -1,0 +1,5 @@
+# Giám khảo cho evaluation/: llama3.1 với context 8192 (mặc định Ollama 4096 → prompt dài bị cắt đầu mà không báo lỗi)
+#   ollama create aurelia-judge -f evaluation/judge.Modelfile
+FROM llama3.1:latest
+PARAMETER num_ctx 8192
+PARAMETER temperature 0

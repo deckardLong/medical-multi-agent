@@ -29,6 +29,16 @@ async def member_allergies(member_id: UUID) -> list[str]:
                 if r.kind == RecordKind.ALLERGY]
 
 
+async def member_age_years(member_id: UUID) -> float | None:
+    """Tuổi (năm, có phần lẻ) theo ngày sinh; None nếu chưa có ngày sinh."""
+    from datetime import date
+    async with SessionLocal() as s:
+        member = await s.get(FamilyMember, member_id)
+    if member is None or member.dob is None:
+        return None
+    return (date.today() - member.dob).days / 365.25
+
+
 async def member_profile_text(member_id: UUID) -> str:
     async with SessionLocal() as s:
         member = await s.get(FamilyMember, member_id)

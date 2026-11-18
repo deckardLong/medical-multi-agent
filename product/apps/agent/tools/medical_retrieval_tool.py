@@ -11,6 +11,16 @@ _embedder = build_embedder(_settings.embed)
 _searcher = HybridSearcher(_client, _settings.collection, _settings.retrieve.search,
                            payload_fields=["chunk_id", "uid", "doc_id", "start", "end", "p_start", "p_end", "text", "ctx"])
 
+def corpus_mentions(term: str) -> bool:
+    """Kho tài liệu có đoạn nào chứa NGUYÊN VĂN `term` không (dùng cho guardrail tên lạ ở chat service).
+    Tìm hybrid bằng chính cái tên (sparse bắt tốt tên hiếm) rồi so khớp chuỗi trên toàn văn đoạn, không phải 500 ký tự
+    đầu — tìm gần đúng thôi thì "Zelvoritin" sẽ khớp nhầm "Zileuton"."""
+    enc = _embedder.encode_queries([term])
+    candidates = _searcher.search([(enc.dense[0].tolist(), enc.sparse[0] if enc.sparse else None)])
+    needle = term.casefold()
+    return any(needle in f"{c.ctx or ''} {c.text or ''}".casefold() for c in candidates)
+
+
 @tool
 def medical_retrieval_tool(query: str) -> str:
     """Tìm kiếm trong kho tài liệu y tế (đa ngôn ngữ) các đoạn văn bản liên quan nhất tới câu hỏi.

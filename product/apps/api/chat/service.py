@@ -7,8 +7,11 @@ from langchain_core.messages import ToolMessage
 from product.db.models import ChatSession, ChatMessage, Document, MessageRole
 from product.apps.api.records.service import UNRESOLVED, propose_from_extraction
 from product.apps.agent.graph import agent
-from product.apps.agent.tools.member_profile_tool import member_allergies, member_profile_text
+from product.apps.agent.tools.medical_retrieval_tool import corpus_mentions, medical_retrieval_tool
+from product.apps.agent.tools.member_profile_tool import member_age_years, member_allergies, member_profile_text
 from product.apps.agent.tools.vision_extract_tool import render_summary, run_engine
+from . import emergency_guard, pediatric_guard, prefetch
+from .entity_guard import safe_reply, unverified_names
 
 _SOURCE_TOOLS = {"medical_retrieval_tool", "web_search_tool"}
 _MEDICAL_TOOLS = _SOURCE_TOOLS | {"vision_extract_tool"}
@@ -104,6 +107,13 @@ def _with_sources(reply: str, messages: list) -> str:
     return reply + "\n\nTài liệu đã tra cứu:\n" + "\n".join(f"- {s}" for s in sources[:3])
 
 
+async def _guard_unknown_names(question: str, reply: str, messages: list, context: str) -> str:
+    """Tên thuốc/bệnh trong câu hỏi mà không nguồn nào xác nhận → không để model đoán (xem entity_guard)."""
+    known = context + "\n" + "\n".join(str(m.content) for m in messages if isinstance(m, ToolMessage))
+    names = await asyncio.to_thread(unverified_names, question, reply, known, corpus_mentions)
+    return safe_reply(names, question) if names else reply
+
+
 def _with_allergy_warning(reply: str, messages: list, allergies: list[str], had_attachments: bool) -> str:
     """An toàn dị ứng không được phụ thuộc vào việc model 7B có nhớ đọc hồ sơ / có gọi tool hay không."""
     if not allergies:
@@ -125,6 +135,13 @@ def _with_allergy_warning(reply: str, messages: list, allergies: list[str], had_
 async def send_message(session: AsyncSession, member_id: UUID, content: str,
                        document_ids: list[UUID] | None = None) -> ChatMessage:
     """member_id đã được router kiểm tra quyền (members.deps.writable_member)."""
+    reply, _ = await send_message_traced(session, member_id, content, document_ids)
+    return reply
+
+
+async def send_message_traced(session: AsyncSession, member_id: UUID, content: str,
+                              document_ids: list[UUID] | None = None) -> tuple[ChatMessage, list]:
+    """Như send_message, trả thêm chuỗi message của agent (tool call, kết quả tool, câu trả lời thô) cho evaluation."""
     docs = await _load_attachments(session, member_id, document_ids or [])
     chat = await get_or_create_session(session, member_id)
     session.add(ChatMessage(session_id=chat.id, role=MessageRole.USER, content=content,
@@ -147,12 +164,26 @@ async def send_message(session: AsyncSession, member_id: UUID, content: str,
     # Lượt có đính kèm chỉ hỏi về tài liệu mới: bỏ lịch sử để model không chép kết quả đọc đơn cũ
     messages += [_for_agent(m) for m in (history[-1:] if docs else history)]
 
-    result = await agent.ainvoke({"messages": messages},
-                                 config={"configurable": {"member_id": str(member_id)}})
-    reply_text = _with_sources(result["messages"][-1].content, result["messages"])
+    emergency = emergency_guard.emergency_kind(content)
+    if not docs and pediatric_guard.is_pediatric_dose_question(content, await member_age_years(member_id)):
+        # Liều cho trẻ < 12 tuổi: không hỏi model — câu trả lời cố định, không có con số liều (xem pediatric_guard)
+        result = {"messages": []}
+        reply_text = pediatric_guard.safe_reply(content)
+    else:
+        if not docs and emergency is None and prefetch.needs_lookup(content):
+            # Không trông vào model 7B tự quyết có tra cứu hay không (xem prefetch)
+            found = await asyncio.to_thread(medical_retrieval_tool.invoke, {"query": content})
+            messages += prefetch.prefetch_messages(content, found)
+        result = await agent.ainvoke({"messages": messages},
+                                     config={"configurable": {"member_id": str(member_id)}})
+        raw = result["messages"][-1].content
+        guarded = await _guard_unknown_names(content, raw, result["messages"], f"{profile}\n{attachments_text}")
+        # câu trả lời an toàn thay thế không dựa trên tài liệu nào → không gắn "Tài liệu đã tra cứu"
+        reply_text = guarded if guarded is not raw else _with_sources(raw, result["messages"])
     if attachments_for_user:
         # Kết quả đọc đơn hiển thị nguyên văn do code tạo — model 7B diễn giải lại thì hay tự chọn/thêm "uống"
         reply_text = f"{attachments_for_user}\n\n{reply_text}"
+    reply_text = emergency_guard.with_banner(reply_text, emergency, content)   # luôn ở đầu, kể cả nhánh trẻ em
     reply_text = _with_allergy_warning(reply_text, result["messages"], await member_allergies(member_id), bool(docs))
 
     # Reply from assistant
@@ -160,7 +191,7 @@ async def send_message(session: AsyncSession, member_id: UUID, content: str,
     session.add(reply)
     await session.commit()
     await session.refresh(reply)
-    return reply
+    return reply, result["messages"]
 
 
 async def get_history(session: AsyncSession, member_id: UUID) -> list[ChatMessage]:

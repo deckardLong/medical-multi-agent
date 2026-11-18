@@ -230,3 +230,9 @@ storage/
 07_module_records_calendar.md
 
 templates/
+# evaluation: kết quả chạy, cache output model, ảnh sinh lại được
+evaluation/results/
+evaluation/.cache/
+evaluation/data/vision/
+evaluation/*.log
+!evaluation/build/

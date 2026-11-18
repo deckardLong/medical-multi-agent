@@ -8,6 +8,11 @@ def _blank_to_none(v):
     # LLM hay trả "" / "null" / placeholder của khuôn thay cho null; không chuẩn hoá thì vote coi đó là bất đồng
     return None if isinstance(v, str) and v.strip().lower() in _EMPTY else v
 
+_STRENGTH = re.compile(r"\d+(?:[.,]\d+)?\s*(?:mg|mcg|µg|g|ml|iu|ui|%)\b", re.IGNORECASE)
+_TRAILING_STRENGTH = re.compile(r"\s+(\d+(?:[.,]\d+)?\s*(?:mg|mcg|µg|g|ml|iu|ui|%)(?:\s*/\s*\d*\s*(?:ml|g))?)\s*$",
+                                re.IGNORECASE)
+
+
 class MedicationLine(BaseModel):
     name: str
     dose: str | None = None
@@ -24,6 +29,13 @@ class MedicationLine(BaseModel):
             if part and name.lower().endswith(part.lower()) and len(name) > len(part):
                 name = name[: -len(part)].rstrip(" ,-–")
         self.name = name or self.name
+        # Bước cấu trúc hoá văn bản (OCR/transcribe → LLM 7B) hay để hàm lượng trong tên ("Azithromycin 250mg") và ghi
+        # số lượng mỗi lần ("1 viên") vào dose dù prompt đã dặn → đồng thuận tách thành 2 thuốc, đề xuất trùng + sai liều
+        m = _TRAILING_STRENGTH.search(self.name)
+        if m and m.start() > 0:
+            self.name = self.name[: m.start()].rstrip(" ,-–")
+            if not self.dose or not _STRENGTH.search(self.dose):
+                self.dose = m.group(1)
         return self
 
 class PrescriptionExtract(BaseModel):

@@ -1,0 +1,58 @@
+# Danh mục thuốc cho đơn thuốc giả lập (lớp 3). Hoạt chất có thật, hàm lượng thông dụng.
+# confusable: các nhóm tên dễ nhầm — bộ sinh cố ý đưa vào để thử cơ chế đồng thuận.
+drugs:
+  - {name: Paracetamol, doses: ["500mg", "650mg"], unit: viên}
+  - {name: Ibuprofen, doses: ["200mg", "400mg"], unit: viên}
+  - {name: Amoxicilin, doses: ["250mg", "500mg"], unit: viên}
+  - {name: Cefuroxim, doses: ["250mg", "500mg"], unit: viên}
+  - {name: Cefixim, doses: ["100mg", "200mg"], unit: viên}
+  - {name: Azithromycin, doses: ["250mg", "500mg"], unit: viên}
+  - {name: Clarithromycin, doses: ["250mg", "500mg"], unit: viên}
+  - {name: Metformin, doses: ["500mg", "850mg"], unit: viên}
+  - {name: Metronidazol, doses: ["250mg", "500mg"], unit: viên}
+  - {name: Gliclazid, doses: ["30mg", "80mg"], unit: viên}
+  - {name: Amlodipin, doses: ["5mg", "10mg"], unit: viên}
+  - {name: Losartan, doses: ["25mg", "50mg"], unit: viên}
+  - {name: Valsartan, doses: ["80mg", "160mg"], unit: viên}
+  - {name: Atorvastatin, doses: ["10mg", "20mg"], unit: viên}
+  - {name: Simvastatin, doses: ["10mg", "20mg"], unit: viên}
+  - {name: Omeprazol, doses: ["20mg", "40mg"], unit: viên}
+  - {name: Esomeprazol, doses: ["20mg", "40mg"], unit: viên}
+  - {name: Pantoprazol, doses: ["20mg", "40mg"], unit: viên}
+  - {name: Domperidon, doses: ["10mg"], unit: viên}
+  - {name: Loratadin, doses: ["10mg"], unit: viên}
+  - {name: Cetirizin, doses: ["10mg"], unit: viên}
+  - {name: Prednisolon, doses: ["5mg"], unit: viên}
+  - {name: Methylprednisolon, doses: ["4mg", "16mg"], unit: viên}
+  - {name: Salbutamol, doses: ["2mg", "4mg"], unit: viên}
+  - {name: Vitamin B1, doses: ["100mg"], unit: viên}
+  - {name: Vitamin B6, doses: ["100mg"], unit: viên}
+  - {name: Vitamin C, doses: ["500mg"], unit: viên}
+  - {name: Alpha chymotrypsin, doses: ["4,2mg"], unit: viên}
+  - {name: Smecta, doses: ["3g"], unit: gói}
+  - {name: Oresol, doses: ["4,1g"], unit: gói}
+
+confusable:
+  - [Cefuroxim, Cefixim]
+  - [Metformin, Metronidazol]
+  - [Losartan, Valsartan]
+  - [Omeprazol, Esomeprazol, Pantoprazol]
+  - [Azithromycin, Clarithromycin]
+  - [Prednisolon, Methylprednisolon]
+  - [Vitamin B1, Vitamin B6]
+  - [Loratadin, Cetirizin]
+
+frequencies:
+  - "Sáng 1 viên, tối 1 viên"
+  - "Ngày 3 lần, mỗi lần 1 viên"
+  - "Ngày 1 lần, buổi sáng"
+  - "Ngày 2 lần, mỗi lần 1 gói"
+  - "8 giờ/lần"
+  - "Tối 1 viên trước khi ngủ"
+
+durations: ["3 ngày", "5 ngày", "7 ngày", "10 ngày", "14 ngày", "30 ngày"]
+
+# Tên hư cấu, không trùng cơ sở y tế / bác sĩ có thật
+facilities: ["Phòng khám Đa khoa Minh An", "Phòng khám Gia đình Bình Yên", "Phòng khám Nội tổng hợp Thảo Nguyên"]
+doctors: ["BS. Trần Văn Hùng", "BS. Lê Thị Mai Phương", "BS. Phạm Quốc Bảo", "BS. Nguyễn Hoài Thu"]
+patients: ["Nguyễn Văn Tám", "Lê Thị Hồng", "Trần Minh Khôi", "Phạm Thu Hà", "Đỗ Văn Lực"]

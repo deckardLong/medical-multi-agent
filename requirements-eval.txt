@@ -1,0 +1,36 @@
+# Thư viện cho evaluation/ — KHÔNG cần để chạy sản phẩm. Cài SAU requirements.txt:
+#   pip install -r requirements-eval.txt
+#   pip install --no-deps deepeval==4.3.4
+#   playwright install chromium            # chỉ cần cho evaluation.build.vision (sinh ảnh đơn thuốc)
+#
+# deepeval 4.3.4 khai báo click<8.4, nhưng huggingface-hub 2.4 (transformers 5.22 cần ≥1.31) đòi click≥8.4 →
+# không có bộ phiên bản nào thoả cả hai. deepeval chỉ dùng click cho CLI (evaluation/ không dùng), nên cài nó
+# bằng --no-deps và ghim sẵn các phụ thuộc còn lại của nó ở dưới.
+ragas==0.4.4
+instructor==1.17.0
+datasets==5.2.0
+openai==3.3.0
+playwright==1.65.2
+
+# phụ thuộc của deepeval (trừ click)
+aiohttp==3.14.5
+confident-trace==0.1.14
+grpcio==1.85.1
+jinja2==3.1.6
+nest_asyncio==1.6.0
+opentelemetry-api==1.45.2
+opentelemetry-sdk==1.45.2
+portalocker==4.4.2
+posthog==7.91.4
+pyfiglet==1.0.4
+pytest==9.2.0
+pytest-asyncio==1.5.0
+pytest-repeat==0.9.4
+pytest-rerunfailures==16.7
+pytest-xdist==3.8.0
+python-dotenv==1.2.4
+questionary==2.1.1
+rich==13.9.4
+tabulate==0.9.0
+tenacity==8.5.0
+typer==0.29.1

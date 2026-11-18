@@ -80,7 +80,19 @@ python -m retrieval.run_queries --queries queries/query.parquet [--live] [--fres
 python -m retrieval.run_select  # second pass over a candidate pool (tune thresholds without rerunning GPU work)
 ```
 
-No test suite exists in this repo (no `tests/`, no pytest config) — don't invent test commands.
+No unit-test suite exists in this repo (no `tests/`, no pytest config) — don't invent test commands.
+
+### `evaluation/` (4-layer eval, local judge — commands and latest results in README "Đánh giá")
+
+`run_retrieval` / `run_generation` / `run_vision` / `run_agent` (all `python -m evaluation.<x>`, need `PYTHONPATH=.`
+and `PYTHONIOENCODING=utf-8` on this console). Deps are in `requirements-eval.txt` (deepeval is installed `--no-deps`
+because of a click pin conflict — don't "fix" it by downgrading huggingface-hub/transformers). Judge model is
+`aurelia-judge` (= `llama3.1` + `num_ctx 8192`, `ollama create aurelia-judge -f evaluation/judge.Modelfile`; Ollama's
+default 4096 context silently truncates judge prompts). Run layers **one at a time**: two Ollama-heavy runs in
+parallel thrash model loading on CPU. `run_agent` creates and deletes a throwaway family in Postgres (fixtures.py).
+`run_vision` caches raw reader output in `evaluation/.cache/vision/`; `--rescore` re-runs consensus scoring from cache.
+Results go to `evaluation/results/` (gitignored). Installing eval libs once silently downgraded `langchain-openai`
+— after touching deps, check `pip list` against `requirements.txt` pins.
 
 ## Architecture: `retrieval/` pipeline
 
@@ -160,6 +172,13 @@ before sending, in the same transaction — guarantees one email per occurrence 
 `tools/context.py::member_id_from(config)` — never from LLM arguments, so a prompt can't reach another
 member's data. `propose_*` tools only write rows with `confirmed_at=None` (user must confirm). The chat
 service prepends the member profile as a system message and appends sources if the model forgets to cite.
+Safety lives in deterministic guards in `apps/api/chat/` (each added after an eval caught the 7B model failing):
+`pediatric_guard` (dose question for a child < 12 → fixed reply, agent not called), `prefetch` (retrieval is run
+before the agent for medical questions and injected as an AIMessage tool_call + ToolMessage pair, so source checks and
+eval traces still see it), `entity_guard` (drug/disease name in the question not found verbatim in tool output /
+profile / corpus via `medical_retrieval_tool.corpus_mentions` → "không tìm thấy" reply), `emergency_guard` (red-flag
+symptoms → "gọi 115" banner on top, no prefetch). Prefer adding a guard here over prompt tweaks; re-run
+`evaluation.run_agent` / `run_generation` after changing any of them.
 `vision_extract_tool` reads an uploaded `Document` with three independent readers (octochains `Engine`) and
 `aggregate/consensus.py` votes per field; any disagreement → `needs_review`. Try a single image with
 `python -m product.apps.agent.tools.vision_extract_tool.try_image <path>` (~3–4 min on CPU).
