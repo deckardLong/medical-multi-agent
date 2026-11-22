@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 from pydantic import BaseModel, EmailStr
 from product.db.models import MemberType, ConnectionStatus
@@ -20,6 +20,7 @@ class FamilyMemberOut(BaseModel):
     display_name: str
     dob: date | None 
     linked_user_id: UUID | None
+    avatar_updated_at: datetime | None = None   # có giá trị = có ảnh đại diện (GET /members/{id}/avatar?v=...)
     model_config = {"from_attributes": True}
 
 class ConnectionRequestIn(BaseModel):

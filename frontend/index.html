@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="color-scheme" content="light dark" />
     <title>AURELIA — Trợ lý sức khoẻ gia đình</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,12 +13,11 @@
       rel="stylesheet"
     />
     <script>
-      // Đặt theme trước khi React nạp để không bị nháy màu sai (FOUC) ở lần tải đầu
+      // Đặt theme trước khi React nạp để không bị nháy màu sai (FOUC) ở lần tải đầu.
+      // Mặc định Light; chỉ dùng Dark khi người dùng đã tự chọn (khoá "aurelia.theme" chỉ được ghi khi bấm đổi).
       try {
-        var t = localStorage.getItem("fh.theme");
-        if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-        document.documentElement.dataset.theme = t;
-      } catch (e) { document.documentElement.dataset.theme = "dark"; }
+        document.documentElement.dataset.theme = localStorage.getItem("aurelia.theme") === "dark" ? "dark" : "light";
+      } catch (e) { document.documentElement.dataset.theme = "light"; }
     </script>
   </head>
   <body>

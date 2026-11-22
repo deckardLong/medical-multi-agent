@@ -35,6 +35,7 @@ export interface FamilyMember {
   display_name: string;
   dob: string | null;
   linked_user_id: UUID | null;
+  avatar_updated_at: string | null;      // có giá trị = có ảnh đại diện (dùng làm phiên bản khi tải ảnh)
 }
 
 export interface Family {
@@ -98,6 +99,7 @@ export interface Dashboard {
     display_name: string;
     member_type: MemberType;
     age: number | null;
+    avatar_updated_at: string | null;
     health_visible: boolean;
     confirmed_records: number | null;
     allergies: string[] | null;

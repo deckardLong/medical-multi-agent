@@ -65,6 +65,31 @@ textarea {
   color: inherit;
 }
 
+/* Trình duyệt vẽ ô nhập / thanh cuộn / lịch chọn ngày theo color-scheme. Để mặc định thì nó theo chế độ của Windows
+   → theme Light của app trên Windows tối vẫn có ô tự điền chữ trắng. Khoá theo đúng theme đang dùng. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Chrome tự điền (email/mật khẩu đã lưu) ép màu chữ + nền riêng, bỏ qua `color` của trang → chữ trắng trên nền sáng.
+   -webkit-text-fill-color thắng màu đó; nền dùng inset shadow vì background-color của trạng thái autofill không ghi đè được. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--c-text);
+  caret-color: var(--c-text);
+  box-shadow: 0 0 0 1000px var(--input-bg, var(--c-surface)) inset;
+  transition: background-color 9999s ease-out 0s;
+}
+input:-webkit-autofill:focus {
+  box-shadow: 0 0 0 1000px var(--input-bg, var(--c-surface)) inset, var(--input-ring, none);
+}
+
 :focus-visible {
   outline: none;
   box-shadow: var(--fx-focus-ring);

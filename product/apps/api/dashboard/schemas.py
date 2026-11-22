@@ -16,6 +16,7 @@ class MemberCard(BaseModel):
     display_name: str
     member_type: MemberType
     age: int | None
+    avatar_updated_at: datetime | None = None   # có giá trị = có ảnh đại diện; dùng làm ?v= khi tải ảnh
     health_visible: bool                 # False: thành viên tự quản lý hồ sơ, chủ gia đình không xem được
     # null khi health_visible=False: [] sẽ bị đọc thành "không có dị ứng" trong khi thực ra là "không được xem"
     confirmed_records: int | None = None

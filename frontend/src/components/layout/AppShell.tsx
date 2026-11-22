@@ -6,6 +6,7 @@ import {
 import { AureliaMark } from "../AureliaMark";
 import { Link, NavLink, Navigate, useLocation, useOutlet } from "react-router-dom";
 import { Avatar, Skeleton } from "../ui";
+import { AvatarUploader } from "../AvatarUploader";
 import { Popover } from "./Popover";
 import { useAuth } from "../../state/AuthContext";
 import { MemberProvider, useMembers } from "../../state/MemberContext";
@@ -39,7 +40,7 @@ function MemberSwitcher() {
             <button key={m.id} role="menuitemradio" aria-checked={m.id === current.id}
                     className={`${s.popItem} ${m.id === current.id ? s.popItemActive : ""}`}
                     onClick={() => { select(m.id); close(); }}>
-              <Avatar name={m.display_name} size={32} />
+              <Avatar name={m.display_name} size={32} memberId={m.id} version={m.avatar_updated_at} />
               <span style={{ flex: 1 }}>{m.display_name}<small>{MEMBER_TYPE[m.member_type]}</small></span>
               {m.id === current.id && <Check size={16} color="var(--c-accent)" />}
             </button>
@@ -52,20 +53,26 @@ function MemberSwitcher() {
 
 function AccountMenu() {
   const { user, logout } = useAuth();
-  const { family } = useMembers();
+  const { family, members, reload } = useMembers();
   if (!user) return null;
+  // Avatar của tài khoản = avatar của thành viên "bản thân" (liên kết với chính tài khoản này)
+  const me = members.find((m) => m.linked_user_id === user.id) ?? members.find((m) => m.member_type === "self");
   return (
     <Popover trigger={(open, toggle) => (
       <button className={s.account} onClick={toggle} aria-expanded={open} aria-label="Tài khoản">
         <span><strong>{family?.name ?? user.display_name}</strong><small>{user.email}</small></span>
-        <Avatar name={user.display_name} size={32} />
+        <Avatar name={user.display_name} size={32} memberId={me?.id} version={me?.avatar_updated_at} />
       </button>
     )}>
       {() => (
         <>
-          <div style={{ padding: "8px 10px" }}>
-            <strong>{user.display_name}</strong>
-            <div className="muted" style={{ fontSize: 13 }}>{user.email}</div>
+          <div style={{ padding: "10px 10px 8px", display: "flex", alignItems: "center", gap: 14 }}>
+            {me && <AvatarUploader memberId={me.id} name={user.display_name} version={me.avatar_updated_at} size={52}
+                                   onChanged={reload} />}
+            <div>
+              <strong>{user.display_name}</strong>
+              <div className="muted" style={{ fontSize: 13 }}>{user.email}</div>
+            </div>
           </div>
           <div className={s.popDivider} />
           <button className={s.popItem} onClick={logout}><LogOut size={16} />Đăng xuất</button>

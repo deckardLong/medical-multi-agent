@@ -181,15 +181,15 @@
   height: 6px;
   border-radius: 50%;
   background: var(--c-accent);
-  /* Chu kỳ 1.6s, các chấm lệch nhau 0.25s → một "làn sóng" chậm, dịu thay vì nhảy liên tục */
-  animation: wave 1.6s infinite cubic-bezier(0.45, 0, 0.55, 1);
+  /* Chu kỳ 2.1s, các chấm lệch nhau 0.3s, nảy 3px → làn sóng chậm, dịu mắt; chậm hơn nữa trông như bị treo */
+  animation: wave 2.1s infinite cubic-bezier(0.45, 0, 0.55, 1);
 }
 .dots i:nth-child(2) {
-  animation-delay: 0.25s;
+  animation-delay: 0.3s;
   background: var(--c-accent2);
 }
 .dots i:nth-child(3) {
-  animation-delay: 0.5s;
+  animation-delay: 0.6s;
 }
 @keyframes wave {
   0%,
@@ -199,7 +199,7 @@
     opacity: 0.4;
   }
   30% {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
     opacity: 1;
   }
 }

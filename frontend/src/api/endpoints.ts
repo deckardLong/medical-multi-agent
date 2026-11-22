@@ -30,6 +30,15 @@ export const chat = {
     api<ChatMessage>(`${m(memberId)}/chat`, { body: { content, document_ids: documentIds } }),
 };
 
+export const avatars = {
+  upload: (memberId: UUID, file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return api<FamilyMember>(`${m(memberId)}/avatar`, { method: "PUT", body: fd });
+  },
+  remove: (memberId: UUID) => api<FamilyMember>(`${m(memberId)}/avatar`, { method: "DELETE" }),
+};
+
 export const documents = {
   list: (memberId: UUID) => api<DocumentOut[]>(`${m(memberId)}/documents`),
   upload: (memberId: UUID, file: File) => {

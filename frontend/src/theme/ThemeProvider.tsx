@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useSt
 import { flushSync } from "react-dom";
 import { globalVars, themeFactories, type ThemeName, type UIThemeFactory } from "./factory";
 
-const STORAGE_KEY = "fh.theme";
+// Khoá mới: bản cũ ("fh.theme") ghi theme ở MỌI lần tải trang nên không phân biệt được người dùng đã tự chọn hay chưa
+const STORAGE_KEY = "aurelia.theme";
 
 interface ThemeCtx {
   name: ThemeName;
@@ -14,7 +15,7 @@ const Ctx = createContext<ThemeCtx | null>(null);
 
 function initialTheme(): ThemeName {
   const t = document.documentElement.dataset.theme;          // đã đặt sẵn bởi script trong index.html
-  return t === "light" ? "light" : "dark";
+  return t === "dark" ? "dark" : "light";             // mặc định Light
 }
 
 type ViewTransitionDoc = Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
@@ -27,11 +28,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     for (const [k, v] of Object.entries(globalVars(factory))) root.style.setProperty(k, v);
     root.dataset.theme = name;
-    try { localStorage.setItem(STORAGE_KEY, name); } catch { /* chế độ riêng tư: bỏ qua */ }
   }, [factory, name]);
 
   const toggle = useCallback((origin?: { x: number; y: number }) => {
     const next: ThemeName = name === "dark" ? "light" : "dark";
+    // Chỉ lưu khi người dùng tự đổi → chưa từng đổi thì luôn theo mặc định (Light)
+    try { localStorage.setItem(STORAGE_KEY, next); localStorage.removeItem("fh.theme"); } catch { /* chế độ riêng tư */ }
     const doc = document as ViewTransitionDoc;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!doc.startViewTransition || reduce) {

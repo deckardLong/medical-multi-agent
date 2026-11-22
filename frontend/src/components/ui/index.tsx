@@ -8,6 +8,8 @@ import { Eye, EyeOff, Inbox, X, type LucideIcon } from "lucide-react";
 import { useUI } from "../../theme/ThemeProvider";
 import type { BadgeTone, ButtonVariant, CardTone } from "../../theme/factory";
 import { initials } from "../../lib/format";
+import { useAvatarSrc } from "../../lib/avatar";
+import type { UUID } from "../../api/types";
 import s from "./ui.module.css";
 
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
@@ -152,11 +154,16 @@ export function Badge({ tone = "neutral", icon: Icon, children }: { tone?: Badge
   return <span className={s.badge} style={skin}>{Icon && <Icon size={12} aria-hidden />}{children}</span>;
 }
 
-export function Avatar({ name, size = 40 }: { name: string; size?: number }) {
+/** memberId + version (avatar_updated_at) → ảnh thật; chưa có ảnh / đang tải / lỗi → chữ cái đầu như cũ. */
+export function Avatar({ name, size = 40, memberId, version }: {
+  name: string; size?: number; memberId?: UUID | null; version?: string | null;
+}) {
+  const src = useAvatarSrc(memberId, version);
   return (
     <span className={s.avatar} style={{ width: size, height: size, fontSize: size * 0.36, borderRadius: size * 0.34 }}
           aria-hidden>
       {initials(name)}
+      {src && <img className={s.avatarImg} src={src} alt="" draggable={false} />}
     </span>
   );
 }

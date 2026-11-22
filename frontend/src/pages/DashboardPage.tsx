@@ -12,6 +12,7 @@ import { useAuth } from "../state/AuthContext";
 import { useMembers } from "../state/MemberContext";
 import { useToast } from "../state/ToastContext";
 import { useAsync } from "../lib/useAsync";
+import { AvatarUploader } from "../components/AvatarUploader";
 import { EVENT_TYPE, MEMBER_TYPE, fmtDay, fmtTime, relative } from "../lib/format";
 import s from "./pages.module.css";
 
@@ -125,7 +126,10 @@ export default function DashboardPage() {
                 {data?.members.map((m) => (
                   <motion.div key={m.id} className={s.member} variants={item}>
                     <div className={s.memberHead}>
-                      <Avatar name={m.display_name} size={44} />
+                      {m.health_visible
+                        ? <AvatarUploader memberId={m.id} name={m.display_name} version={m.avatar_updated_at} size={44}
+                                          onChanged={() => Promise.all([reload(), reloadMembers()])} />
+                        : <Avatar name={m.display_name} size={44} memberId={m.id} version={m.avatar_updated_at} />}
                       <div className={s.grow}>
                         <strong>{m.display_name}</strong>
                         <small>{MEMBER_TYPE[m.member_type]}{m.age != null && ` · ${m.age} tuổi`}</small>

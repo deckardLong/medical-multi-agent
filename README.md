@@ -377,6 +377,7 @@ không dò ra được `member_id` nào tồn tại. Tài liệu tương tác: `
 |---|---|
 | Xác thực | `POST /auth/register` · `POST /auth/login` · `GET /auth/me` |
 | Gia đình | `GET /families/me` · `GET`/`POST /families/me/members` · `POST /connections` · `POST /connections/{id}/respond` |
+| Ảnh đại diện | `PUT`/`GET`/`DELETE /members/{id}/avatar` (JPEG/PNG/WEBP ≤ 5MB; lưu bản 256×256 WEBP đã bỏ EXIF) |
 | Tổng quan | `GET /dashboard` |
 | Chat | `GET`/`POST /members/{id}/chat` (body có thể kèm `document_ids`) |
 | Tài liệu | `GET`/`POST /members/{id}/documents` |

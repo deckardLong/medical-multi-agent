@@ -14,6 +14,7 @@ import { useMembers } from "../state/MemberContext";
 import { useToast } from "../state/ToastContext";
 import { useAsync } from "../lib/useAsync";
 import { MEMBER_TYPE } from "../lib/format";
+import { AvatarUploader } from "../components/AvatarUploader";
 import s from "./chat.module.css";
 
 const MAX_FILE = 10 * 1024 * 1024;
@@ -22,7 +23,7 @@ const ACCEPT = ["image/jpeg", "image/png", "image/webp"];
 interface Pending { file: File; url: string }
 
 export default function ChatPage() {
-  const { current } = useMembers();
+  const { current, reload: reloadMembers } = useMembers();
   const toast = useToast();
   const navigate = useNavigate();
   const memberId = current?.id;
@@ -187,7 +188,7 @@ export default function ChatPage() {
               <motion.div key={m.id} id={`msg-${m.id}`} className={`${s.msg} ${m.role === "user" ? s.msgUser : ""}`}
                           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}>
-                {m.role === "user" ? <Avatar name={current.display_name} size={34} />
+                {m.role === "user" ? <Avatar name={current.display_name} size={34} memberId={current.id} version={current.avatar_updated_at} />
                   : <span className={s.badgeOk} title="AURELIA"><AureliaMark size={24} mono /></span>}
                 <div className={`${s.bubble} ${m.role === "user" ? s.bubbleUser : ""}`}>
                   {m.role === "assistant" ? <Markdown text={m.content} /> : m.content}
@@ -235,7 +236,12 @@ export default function ChatPage() {
       <div className={s.col}>
         <Card>
           <div className={s.eyebrow}><span>Hồ sơ đang xem</span></div>
-          <div style={{ marginTop: 14 }}><Avatar name={current.display_name} size={64} /></div>
+          <div style={{ marginTop: 14 }}>
+            {card?.health_visible === false
+              ? <Avatar name={current.display_name} size={64} memberId={current.id} version={current.avatar_updated_at} />
+              : <AvatarUploader memberId={current.id} name={current.display_name} version={current.avatar_updated_at}
+                                onChanged={() => Promise.all([reloadMembers(), overview.reload()])} />}
+          </div>
           <h3 className={s.profileName}>{current.display_name}</h3>
           <div className={s.meta}>
             <span>{MEMBER_TYPE[current.member_type]}</span>

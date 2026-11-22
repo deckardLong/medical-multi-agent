@@ -1,10 +1,14 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from fastapi.responses import FileResponse
 from product.db.session import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from product.apps.api.auth.deps import get_current_user
+from product.apps.api.documents.service import InvalidUpload
+from product.db.models import FamilyMember
 from .schemas import FamilyMemberIn, FamilyOut, FamilyMemberOut, ConnectionOut, ConnectionRequestIn, AttachConnectionIn
-from . import service
+from . import avatar, service
+from .deps import readable_member, writable_member
 from .permissions import can_write_member
 
 
@@ -59,3 +63,28 @@ async def attach(data: AttachConnectionIn, user=Depends(get_current_user), sessi
 @router.post("/connections/incoming", response_model=list[ConnectionOut])
 async def incoming_connections(user=Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     return await service.list_incoming_connections(session, user)
+
+# ---------- Ảnh đại diện (theo thành viên: con nhỏ / ông bà không có tài khoản vẫn có avatar) ----------
+@router.put("/members/{member_id}/avatar", response_model=FamilyMemberOut)
+async def upload_avatar(file: UploadFile = File(...), member: FamilyMember = Depends(writable_member),
+                        session: AsyncSession = Depends(get_session)):
+    """JPEG/PNG/WEBP ≤ 5MB, cạnh ngắn ≥ 64px. Lưu bản 256×256 WEBP đã cắt vuông và bỏ EXIF."""
+    try:
+        return await avatar.set_avatar(session, member, file)
+    except InvalidUpload as e:
+        code = status.HTTP_413_CONTENT_TOO_LARGE if e.too_large else status.HTTP_400_BAD_REQUEST
+        raise HTTPException(code, str(e))
+
+
+@router.delete("/members/{member_id}/avatar", response_model=FamilyMemberOut)
+async def delete_avatar(member: FamilyMember = Depends(writable_member), session: AsyncSession = Depends(get_session)):
+    return await avatar.remove_avatar(session, member)
+
+
+@router.get("/members/{member_id}/avatar", response_class=FileResponse)
+async def get_avatar(member: FamilyMember = Depends(readable_member)):
+    path = avatar.avatar_file(member)
+    if path is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Thành viên chưa có ảnh đại diện")
+    # private: chỉ trình duyệt của người đang đăng nhập được cache; URL có ?v=<thời điểm cập nhật> nên cache dài vẫn an toàn
+    return FileResponse(path, media_type="image/webp", headers={"Cache-Control": "private, max-age=86400"})

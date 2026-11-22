@@ -1,0 +1,71 @@
+.wrap {
+  position: relative;
+  flex: none;
+}
+
+.cam,
+.remove {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--c-surface);
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out), opacity 160ms var(--ease-out);
+}
+.cam {
+  right: -6px;
+  bottom: -6px;
+  color: var(--c-on-accent);
+  background: var(--fx-gradient);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+.cam:hover:not(:disabled),
+.cam:focus-visible {
+  transform: scale(1.08);
+}
+.cam:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Nút xoá chỉ hiện khi rê chuột / focus vào avatar — tránh bấm nhầm */
+.remove {
+  top: -6px;
+  right: -6px;
+  color: var(--c-danger);
+  background: var(--c-surface);
+  opacity: 0;
+  transform: scale(0.85);
+}
+.wrap:hover .remove,
+.remove:focus-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+@media (hover: none) {
+  .remove {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.busy {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 34%;
+}
+.spin {
+  animation: spin 1.4s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

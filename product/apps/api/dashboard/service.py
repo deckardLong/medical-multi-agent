@@ -55,12 +55,13 @@ async def build_dashboard(session: AsyncSession, user: User) -> DashboardOut:
     for m in members:
         if m.id not in ids:
             cards.append(MemberCard(id=m.id, display_name=m.display_name, member_type=m.member_type,
-                                    age=_age(m.dob, today), health_visible=False))
+                                    age=_age(m.dob, today), avatar_updated_at=m.avatar_updated_at,
+                                    health_visible=False))
             continue
         mine = [a for a in alerts if a.member_id == m.id]
         cards.append(MemberCard(
             id=m.id, display_name=m.display_name, member_type=m.member_type, age=_age(m.dob, today),
-            health_visible=True, confirmed_records=counts.get(m.id, 0),
+            avatar_updated_at=m.avatar_updated_at, health_visible=True, confirmed_records=counts.get(m.id, 0),
             allergies=[_label(a) for a in mine if a.kind == RecordKind.ALLERGY],
             conditions=[_label(a) for a in mine if a.kind == RecordKind.CONDITION]))
 
