@@ -9,6 +9,10 @@ from product.db.models import Base
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+# URL lấy từ PRODUCT_DATABASE_URL (.env hoặc biến môi trường trên server) để migration và app luôn trỏ cùng một
+# database; alembic.ini chỉ còn là giá trị dự phòng khi chưa cấu hình gì.
+from product.config import ProductEnv  # noqa: E402
+config.set_main_option("sqlalchemy.url", ProductEnv().sync_database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

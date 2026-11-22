@@ -236,3 +236,6 @@ evaluation/.cache/
 evaluation/data/vision/
 evaluation/*.log
 !evaluation/build/
+# Mẫu lib/ và state/ ở trên (Python / dữ liệu pipeline) vô tình bỏ qua mã nguồn frontend
+!frontend/src/lib/
+!frontend/src/state/

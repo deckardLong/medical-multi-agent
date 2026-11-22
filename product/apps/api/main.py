@@ -1,6 +1,7 @@
 # Entry point
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from product.apps.api.auth.router import router as auth_router
 from product.apps.api.members.router import router as members_router
 from .chat.router import router as chat_router
@@ -35,6 +36,18 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(title="AURELIA API", description="Trợ lý sức khoẻ gia đình — Assisted Understanding & Reasoning "
               "for Evidence-based Life & Integrated Assistance", lifespan=lifespan)
+if origins := [o.strip().rstrip("/") for o in env.cors_origins.split(",") if o.strip()]:
+    # Frontend ở domain khác (Vercel) gọi thẳng API. Xác thực bằng header Bearer, không dùng cookie.
+    app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"],
+                       allow_credentials=False, max_age=600)
+
+
+@app.get("/health", include_in_schema=False)
+async def health():
+    """Render health check: không chạm DB/model để không báo lỗi giả khi model đang nạp."""
+    return {"status": "ok"}
+
+
 app.include_router(auth_router)
 app.include_router(members_router)
 app.include_router(chat_router)

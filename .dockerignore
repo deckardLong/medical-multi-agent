@@ -1,0 +1,19 @@
+# Chỉ backend vào image; dữ liệu lớn, secrets và frontend ở ngoài
+.git
+.env
+.env.*
+!.env.example
+venv/
+**/__pycache__/
+frontend/
+evaluation/
+corpus_sync/
+corpus/
+derived/
+state/
+storage/
+queries/
+templates/
+docs/
+*.log
+*.md

@@ -181,6 +181,7 @@ văn bản hay để hàm lượng trong tên, khiến cùng một thuốc bị 
 │  ├─ apps/agent/            #   Agent LangChain, prompt, tools (retrieval, web, hồ sơ, lịch, đọc ảnh)
 │  ├─ db/models/             #   SQLAlchemy models
 │  └─ db/migrations/         #   Alembic
+├─ docs/DEPLOY.md            # Hướng dẫn deploy Vercel + Render
 ├─ frontend/                 # React 18 + TypeScript + Vite
 ├─ retrieval/                # Chunk, embed, index, search, rerank
 ├─ corpus_sync/              # Tải corpus và dữ liệu đã tính sẵn từ HuggingFace
@@ -216,6 +217,8 @@ cd frontend
 npm install
 npm run dev                          # http://127.0.0.1:5173
 ```
+
+**Deploy** (Vercel + Render, có Dockerfile và `render.yaml`): xem [docs/DEPLOY.md](docs/DEPLOY.md).
 
 **Dựng chỉ mục Qdrant**: chỉ cần làm lần đầu. Bước embedding nên chạy trên máy có GPU.
 

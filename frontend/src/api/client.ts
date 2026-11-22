@@ -1,4 +1,6 @@
-const BASE = "/api";
+// Dev: "/api" (Vite proxy sang FastAPI, cùng origin). Deploy: VITE_API_BASE=https://<backend>.onrender.com
+export const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/+$/, "") || "/api";
+const BASE = API_BASE;
 const TOKEN_KEY = "fh.token";
 
 export class ApiError extends Error {
@@ -75,7 +77,8 @@ export async function api<T>(path: string, opts: { method?: string; body?: Body;
     res = await fetch(BASE + path, { method: opts.method ?? (body ? "POST" : "GET"), headers, body, signal: opts.signal });
   } catch (e) {
     if ((e as Error).name === "AbortError") throw e;
-    throw new ApiError(0, "Không kết nối được máy chủ. Kiểm tra backend (cổng 8000) đã chạy chưa.");
+    throw new ApiError(0, import.meta.env.DEV ? "Không kết nối được máy chủ. Kiểm tra backend (cổng 8000) đã chạy chưa."
+                                               : "Không kết nối được máy chủ. Máy chủ có thể đang khởi động, vui lòng thử lại sau ít phút.");
   }
 
   if (res.status === 401 && token) onUnauthorized();

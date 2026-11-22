@@ -1,0 +1,56 @@
+# Render Blueprint: Dashboard → New → Blueprint → chọn repo này. Secret (sync: false) Render sẽ hỏi khi tạo.
+services:
+  - type: web
+    name: aurelia-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    # Đo thực tế (docker stats): ~2.5GB khi rảnh, ~4GB khi chat, ~5.9GB khi đọc ảnh đơn thuốc (nạp PaddleOCR)
+    # → 2c-4g sẽ bị kill vì hết RAM ở lần đọc ảnh đầu tiên
+    plan: 2c-8g
+    region: singapore
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:                                   # ảnh đơn thuốc + avatar; không có disk thì mất hết sau mỗi lần deploy
+      name: aurelia-data
+      mountPath: /var/data
+      sizeGB: 5
+    envVars:
+      - key: PRODUCT_DATABASE_URL
+        fromDatabase:
+          name: aurelia-db
+          property: connectionString
+      - key: PRODUCT_JWT_SECRET
+        generateValue: true
+      - key: PRODUCT_CORS_ORIGINS           # vd https://aurelia.vercel.app (nhiều origin: phân cách bằng dấu phẩy)
+        sync: false
+      - key: PRODUCT_LLM_BASE_URL           # endpoint tương thích OpenAI (xem docs/DEPLOY.md mục LLM)
+        sync: false
+      - key: PRODUCT_LLM_API_KEY
+        sync: false
+      - key: PRODUCT_LLM_MODEL
+        sync: false
+      - key: PRODUCT_VLM_MODEL
+        sync: false
+      - key: PRODUCT_VLM_TRANSCRIBE_MODEL
+        sync: false
+      - key: PRODUCT_TAVILY_API_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: PRODUCT_SMTP_HOST              # để trống nếu chưa cần email nhắc lịch
+        sync: false
+      - key: PRODUCT_SMTP_USER
+        sync: false
+      - key: PRODUCT_SMTP_PASSWORD
+        sync: false
+      - key: PRODUCT_SMTP_FROM
+        sync: false
+
+databases:
+  - name: aurelia-db
+    databaseName: product
+    user: aurelia
+    plan: 0.1c-256mb
+    region: singapore

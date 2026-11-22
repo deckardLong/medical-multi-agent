@@ -1,9 +1,12 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import SecretStr
+from pydantic import SecretStr, field_validator
 
 class ProductEnv(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_prefix="PRODUCT_", extra="ignore")
     database_url: str = "postgresql+asyncpg://user:pass@localhost:5432/product"
+    # Origin frontend được gọi API từ trình duyệt, cách nhau dấu phẩy (vd "https://aurelia.vercel.app").
+    # Trống = không bật CORS (dev dùng Vite proxy cùng origin).
+    cors_origins: str = ""
     jwt_secret: str = "change-me"
     jwt_expire_minutes: int = 60 * 24
 
@@ -28,3 +31,17 @@ class ProductEnv(BaseSettings):
 
     reminder_lead_minutes: int = 60       # nhắc trước bao nhiêu phút
     reminder_scan_interval_minutes: int = 5
+
+    @field_validator("database_url")
+    @classmethod
+    def _async_driver(cls, v: str) -> str:
+        # Render/Heroku cấp URL dạng postgres:// hoặc postgresql:// → app cần driver asyncpg
+        for prefix in ("postgres://", "postgresql://"):
+            if v.startswith(prefix):
+                return "postgresql+asyncpg://" + v[len(prefix):]
+        return v
+
+    @property
+    def sync_database_url(self) -> str:
+        """Cùng database, driver psycopg2 cho Alembic (migration chạy đồng bộ)."""
+        return self.database_url.replace("+asyncpg", "+psycopg2", 1)
