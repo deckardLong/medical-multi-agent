@@ -13,6 +13,46 @@ Trình duyệt ──► Vercel: React (frontend/)             VITE_API_BASE
 
 Frontend gọi **thẳng** API trên Render (không proxy qua Vercel), vì mỗi câu chat có thể mất 20–60 giây.
 
+## Phương án miễn phí: Vercel + Cloudflare Tunnel về máy của bạn
+
+Frontend trên Vercel (gói miễn phí). Backend, Postgres, Qdrant và Ollama **chạy trên máy bạn như khi dev**; Cloudflare
+Quick Tunnel (miễn phí, không cần tài khoản) cấp một URL `https://….trycloudflare.com` trỏ về `127.0.0.1:8000`.
+Không phải mở port router; Postgres, Qdrant, Ollama không bị lộ ra ngoài (tunnel chỉ trỏ vào API). Dữ liệu sức khoẻ
+không rời máy bạn. Đổi lại: **máy phải bật** thì web mới chạy, và tốc độ như khi chạy local.
+
+**Giới hạn 100 giây của Cloudflare**: request nào quá ~100 giây bị cắt (lỗi 524). Đọc ảnh đơn thuốc trên CPU mất
+3–10 phút, nên frontend dùng chat **chạy nền + hỏi kết quả**: `POST /members/{id}/chat/jobs` trả ngay `job_id`,
+frontend hỏi `GET …/chat/jobs/{job_id}` mỗi 2.5 giây. Đã thử qua tunnel: đọc đơn xong sau ~10 phút, không request nào
+quá 40 giây. (Khi PaddleOCR đang chạy, API phản hồi chậm hơn hẳn vì PaddleOCR giữ GIL của Python.)
+
+### Lần đầu
+
+1. Cài cloudflared: `winget install --id Cloudflare.cloudflared`
+2. Chọn tên project Vercel trước (ví dụ `aurelia-family`) → frontend sẽ ở `https://aurelia-family.vercel.app`.
+   Thêm vào `.env`: `PRODUCT_CORS_ORIGINS=https://aurelia-family.vercel.app`
+3. Chạy backend + tunnel (giữ cửa sổ mở):
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts\start-public.ps1
+   ```
+   Script bật Docker (Postgres + Qdrant), Ollama, API trên `127.0.0.1:8000`, tunnel, rồi in **URL công khai**
+   (cũng ghi ở `logs\public-url.txt`). URL mới cần vài giây để DNS nhận.
+4. [vercel.com/new](https://vercel.com/new) → import repo GitHub → **Project Name** đúng tên ở bước 2 →
+   **Root Directory: `frontend`** → Environment Variables: `VITE_API_BASE` = URL ở bước 3 → **Deploy**.
+5. Mở `https://aurelia-family.vercel.app`, đăng ký, thử chat. Kiểm tra theo mục 4 (checklist) bên dưới.
+
+### Những lần sau
+
+Mỗi lần chạy `start-public.ps1`, Quick Tunnel cấp **URL mới** → Vercel → Settings → Environment Variables →
+sửa `VITE_API_BASE` → Deployments → **Redeploy** (khoảng 1 phút). Tắt: Ctrl+C cửa sổ script, rồi
+`scripts\stop-public.ps1`.
+
+Muốn URL **cố định** (không phải Redeploy): tạo Named Tunnel trong Cloudflare Zero Trust, cần một domain trỏ về
+Cloudflare (domain là phần duy nhất mất tiền).
+
+---
+
+# Phương án trả phí: Render
+
 ## 0. Hai quyết định trước khi deploy
 
 ### LLM / VLM: chạy ở đâu?

@@ -218,7 +218,8 @@ npm install
 npm run dev                          # http://127.0.0.1:5173
 ```
 
-**Deploy** (Vercel + Render, có Dockerfile và `render.yaml`): xem [docs/DEPLOY.md](docs/DEPLOY.md).
+**Deploy**: xem [docs/DEPLOY.md](docs/DEPLOY.md). Miễn phí: Vercel + Cloudflare Tunnel về máy này
+(`scripts\start-public.ps1`). Trả phí: Vercel + Render (có sẵn `Dockerfile`, `render.yaml`).
 
 **Dựng chỉ mục Qdrant**: chỉ cần làm lần đầu. Bước embedding nên chạy trên máy có GPU.
 
@@ -382,7 +383,7 @@ không dò ra được `member_id` nào tồn tại. Tài liệu tương tác: `
 | Gia đình | `GET /families/me` · `GET`/`POST /families/me/members` · `POST /connections` · `POST /connections/{id}/respond` |
 | Ảnh đại diện | `PUT`/`GET`/`DELETE /members/{id}/avatar` (JPEG/PNG/WEBP ≤ 5MB; lưu bản 256×256 WEBP đã bỏ EXIF) |
 | Tổng quan | `GET /dashboard` |
-| Chat | `GET`/`POST /members/{id}/chat` (body có thể kèm `document_ids`) |
+| Chat | `GET`/`POST /members/{id}/chat` (body có thể kèm `document_ids`) · `POST .../chat/jobs` → 202 + `job_id`, `GET .../chat/jobs/{job_id}` (chạy nền, dùng khi đi qua proxy cắt request dài) |
 | Tài liệu | `GET`/`POST /members/{id}/documents` |
 | Hồ sơ | `GET /members/{id}/records?status_filter=` · `POST .../records` · `POST .../records/{rid}/confirm` · `DELETE .../records/{rid}` |
 | Lịch | `GET /members/{id}/calendar?start=&end=&include_pending=` · `GET .../calendar/pending` · `POST .../calendar` · `POST .../calendar/{eid}/confirm` · `DELETE .../calendar/{eid}` |

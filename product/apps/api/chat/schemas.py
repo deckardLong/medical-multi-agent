@@ -12,3 +12,10 @@ class ChatMessageOut(BaseModel):
     content: str
     attachments: list[UUID] | None = None
     model_config = {"from_attributes": True}
+
+class ChatJobOut(BaseModel):
+    id: str
+    status: str                       # pending | done | error
+    reply: ChatMessageOut | None = None
+    error: str | None = None
+    model_config = {"from_attributes": True}

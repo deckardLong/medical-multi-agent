@@ -1,6 +1,6 @@
-import { api } from "./client";
+import { api, ApiError } from "./client";
 import type {
-  CalendarEvent, ChatMessage, Dashboard, DocumentOut, EventType, Family, FamilyMember, MedicalRecord, MemberType,
+  CalendarEvent, ChatJob, ChatMessage, Dashboard, DocumentOut, EventType, Family, FamilyMember, MedicalRecord, MemberType,
   Occurrence, RecordKind, RegisterIn, User, UUID,
 } from "./types";
 
@@ -28,6 +28,22 @@ export const chat = {
   history: (memberId: UUID) => api<ChatMessage[]>(`${m(memberId)}/chat`),
   send: (memberId: UUID, content: string, documentIds: UUID[] = []) =>
     api<ChatMessage>(`${m(memberId)}/chat`, { body: { content, document_ids: documentIds } }),
+  /**
+   * Gửi câu hỏi chạy nền rồi hỏi kết quả mỗi 2.5s. Không request nào kéo dài, nên đi qua proxy cắt request dài
+   * (Cloudflare Tunnel ~100s) vẫn được — đọc ảnh đơn thuốc trên CPU mất 3–5 phút.
+   */
+  ask: async (memberId: UUID, content: string, documentIds: UUID[] = [], opts: { signal?: AbortSignal } = {}) => {
+    const job = await api<ChatJob>(`${m(memberId)}/chat/jobs`, { body: { content, document_ids: documentIds } });
+    const deadline = Date.now() + 20 * 60 * 1000;
+    for (;;) {
+      await new Promise((r) => setTimeout(r, 2500));
+      if (opts.signal?.aborted) throw new DOMException("aborted", "AbortError");
+      const j = await api<ChatJob>(`${m(memberId)}/chat/jobs/${job.id}`, { signal: opts.signal });
+      if (j.status === "done" && j.reply) return j.reply;
+      if (j.status === "error") throw new ApiError(500, j.error ?? "AURELIA gặp lỗi khi xử lý câu hỏi.");
+      if (Date.now() > deadline) throw new ApiError(504, "AURELIA trả lời quá lâu, vui lòng thử lại.");
+    }
+  },
 };
 
 export const avatars = {

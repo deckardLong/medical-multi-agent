@@ -239,3 +239,6 @@ evaluation/*.log
 # Mẫu lib/ và state/ ở trên (Python / dữ liệu pipeline) vô tình bỏ qua mã nguồn frontend
 !frontend/src/lib/
 !frontend/src/state/
+
+# log của scripts/start-public.ps1 (URL tunnel, log API)
+logs/

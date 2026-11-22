@@ -50,6 +50,13 @@ export interface ChatMessage {
   attachments: UUID[] | null;
 }
 
+export interface ChatJob {
+  id: string;
+  status: "pending" | "done" | "error";
+  reply: ChatMessage | null;
+  error: string | null;
+}
+
 export interface DocumentOut {
   id: UUID;
   mime_type: string;

@@ -104,7 +104,7 @@ export default function ChatPage() {
     setSending(true);
     try {
       const ids = await Promise.all(sentFiles.map((f) => documents.upload(forMember, f.file).then((d) => d.id)));
-      await chat.send(forMember, content, ids);
+      await chat.ask(forMember, content, ids);              // chạy nền + hỏi kết quả (xem endpoints.ts)
       if (activeMember.current !== forMember) return;      // đã đổi sang thành viên khác trong lúc chờ
       await history.reload();                              // lấy lại từ server: có id thật + câu trả lời đã lưu
       if (ids.length) pending.reload();
