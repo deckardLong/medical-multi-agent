@@ -17,6 +17,15 @@
   <b>A</b>ssisted <b>U</b>nderstanding &amp; <b>R</b>easoning for <b>E</b>vidence-based <b>L</b>ife &amp; <b>I</b>ntegrated <b>A</b>ssistance
 </p>
 
+<p align="center">
+  <a href="https://medical-multi-agent.vercel.app"><img src="https://img.shields.io/badge/Demo-medical--multi--agent.vercel.app-3DB4FE?logo=vercel&logoColor=white" alt="Demo"></a>
+</p>
+
+> **Demo:** [medical-multi-agent.vercel.app](https://medical-multi-agent.vercel.app)
+> Backend chạy trên máy cá nhân và được mở ra Internet qua Cloudflare Tunnel ([docs/DEPLOY.md](docs/DEPLOY.md)), nên demo
+> chỉ hoạt động khi máy đang bật. Model chạy trên CPU: mỗi câu trả lời mất từ vài chục giây tới khoảng 3 phút, đọc ảnh
+> đơn thuốc mất 5–10 phút. Vui lòng không nhập thông tin sức khoẻ thật khi dùng thử.
+
 **AURELIA** là trợ lý sức khoẻ gia đình. AURELIA trả lời câu hỏi y khoa bằng cách tra cứu kho tài liệu y tế đa ngôn ngữ
 (tiếng Việt, tiếng Trung). Kho được tìm kiếm bằng hybrid search (dense + sparse) trên Qdrant. Hệ thống quản lý
 hồ sơ và lịch khám cho từng thành viên trong gia đình, đọc ảnh đơn thuốc, và gửi email nhắc lịch.
