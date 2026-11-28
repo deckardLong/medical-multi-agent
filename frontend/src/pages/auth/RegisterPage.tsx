@@ -98,7 +98,8 @@ export default function RegisterPage() {
                value={f.phone} onChange={set("phone")} error={show("phone")} />
         <label className={s.check}>
           <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
-          <span>Tôi đồng ý với điều khoản sử dụng và chính sách dữ liệu sức khoẻ</span>
+          <span>Tôi đồng ý với <Link to="/terms" target="_blank">Điều khoản sử dụng</Link> và{" "}
+            <Link to="/privacy" target="_blank">Chính sách quyền riêng tư</Link> (gồm xử lý dữ liệu sức khoẻ)</span>
         </label>
         {touched && !agree && <span style={{ color: "var(--c-danger)", fontSize: 12, marginTop: -8 }}>Cần đồng ý điều khoản</span>}
         <Button type="submit" variant="primary" icon={UserPlus} loading={busy} block>Đăng ký</Button>
@@ -108,6 +109,9 @@ export default function RegisterPage() {
         await loginSocial(provider, token, true);
         navigate("/", { replace: true });
       }} />
+      <p className={s.consent}>Khi tiếp tục với Google hoặc Facebook, bạn đồng ý với{" "}
+        <Link to="/terms" target="_blank">Điều khoản sử dụng</Link> và{" "}
+        <Link to="/privacy" target="_blank">Chính sách quyền riêng tư</Link>.</p>
       <p className={s.switch}>Đã có tài khoản?<Link to="/login">Đăng nhập</Link></p>
     </>
   );

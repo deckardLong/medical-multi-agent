@@ -51,6 +51,9 @@ export default function LoginPage() {
         await loginSocial(provider, token, remember);
         navigate(from, { replace: true });
       }} />
+      <p className={s.consent}>Khi tiếp tục với Google hoặc Facebook, bạn đồng ý với{" "}
+        <Link to="/terms" target="_blank">Điều khoản sử dụng</Link> và{" "}
+        <Link to="/privacy" target="_blank">Chính sách quyền riêng tư</Link>.</p>
       <p className={s.switch}>Chưa có tài khoản?<Link to="/register">Đăng ký</Link></p>
     </>
   );

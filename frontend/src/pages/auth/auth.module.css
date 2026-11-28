@@ -314,3 +314,12 @@
     justify-content: center;
   }
 }
+
+/* Ghi chú đồng ý điều khoản dưới nút Google/Facebook (đăng ký bằng mạng xã hội không đi qua ô đồng ý của form) */
+.consent {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--c-text-muted);
+}
