@@ -118,7 +118,7 @@ export function SocialLogin({ onToken, text = "signin_with", divider = true, dis
           <div className={s.googleWrap}>
             {/* Nút nhìn thấy. Bình thường cú bấm đi vào nút Google trong suốt phía trên; nếu Google không vẽ được nút
                 thì chính nút này nhận click và báo lý do, thay vì bấm không có phản hồi */}
-            <button type="button" className={`${s.btn} ${google === "loading" ? s.pending : ""}`} style={skin}
+            <button type="button" className={s.btn} style={skin}
                     tabIndex={google === "ready" ? -1 : 0} aria-hidden={google === "ready"}
                     onClick={() => google === "failed" && setError(
                       "Không mở được đăng nhập Google trên trang này. Có thể địa chỉ trang chưa được khai báo trong "
