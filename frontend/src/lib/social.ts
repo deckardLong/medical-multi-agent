@@ -63,7 +63,7 @@ export async function renderGoogleButton(el: HTMLElement, onIdToken: (idToken: s
   googleCallback = onIdToken;
   el.innerHTML = "";
   id.renderButton(el, {
-    type: "standard", size: "large", shape: "pill", logo_alignment: "left", locale: "vi",
+    type: "standard", size: "large", shape: "rectangular", logo_alignment: "left", locale: "vi",
     theme: opts.dark ? "filled_black" : "outline", text: opts.text, width: Math.round(Math.min(400, opts.width)),
   });
 }

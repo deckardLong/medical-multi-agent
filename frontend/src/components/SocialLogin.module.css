@@ -21,7 +21,7 @@
 
 .buttons {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);    /* không để nút Google (bề rộng cố định) kéo giãn cột */
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
   transition: opacity 200ms var(--ease-out);
 }
@@ -30,41 +30,86 @@
   pointer-events: none;
 }
 
-/* Nút Google do Google vẽ trong iframe; khung chỉ giữ chiều cao để trang không nhảy khi nút tải xong */
-.google {
-  min-height: 44px;
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
-}
-
-/* Màu và chữ theo hướng dẫn thương hiệu của Meta: nền #1877F2, chữ trắng, logo "f" */
-.facebook {
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+/* Cùng kích thước, bo góc, font, màu với Button "secondary" của hệ thống (skin lấy từ theme factory) */
+.btn {
   width: 100%;
-  max-width: 400px;
-  justify-self: center;
-  border: 0;
-  border-radius: 999px;
-  background: #1877f2;
-  color: #fff;
+  height: 40px;
+  padding: 0 14px;
+  display: grid;
+  grid-template-columns: 22px 1fr 22px;      /* logo | chữ | cột trống đối xứng → chữ luôn ở chính giữa */
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  box-shadow: var(--btn-shadow);
+  font: inherit;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: background 160ms var(--ease-out), transform 160ms var(--ease-out);
+  transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out), border-color 160ms var(--ease-out),
+    opacity 200ms var(--ease-out);
 }
-.facebook:hover:not(:disabled) {
-  background: #166fe5;
+.btn:hover:not(:disabled),
+.googleWrap:hover .btn {
+  transform: translateY(-1px);
+  box-shadow: var(--btn-shadow-hover);
+  border-color: color-mix(in srgb, var(--c-accent) 45%, var(--btn-border));
 }
-.facebook:active:not(:disabled) {
-  transform: scale(0.98);
+.btn:active:not(:disabled),
+.googleWrap:active .btn {
+  transform: translateY(0) scale(0.98);
 }
-.facebook:disabled {
+.btn:focus-visible,
+.googleWrap:focus-within .btn {
+  outline: none;
+  box-shadow: var(--fx-focus-ring);
+}
+.btn:disabled {
   cursor: default;
+}
+.pending {
+  opacity: 0.55;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+}
+.label {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spin {
+  animation: spin 1.4s linear infinite;
+  color: var(--c-accent);
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Nút Google chính thức nằm trong suốt ngay trên nút nhìn thấy, phủ kín (cao 40px như nút "large" của Google) */
+.googleWrap {
+  position: relative;
+  height: 40px;
+}
+.googleLayer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;              /* vẫn nhận click; 0.01 còn lộ bóng chữ của nút Google */
+}
+.googleLayer iframe {
+  margin: 0 !important;
 }
 
 .error {
@@ -76,13 +121,6 @@
   border: 1px solid color-mix(in srgb, var(--c-danger) 30%, transparent);
 }
 
-.note {
-  margin: 0;
-  text-align: center;
-  font-size: 13px;
-  color: var(--c-text-muted);
-}
-
 /* Trong menu tài khoản: không cần khoảng cách phía trên như ở trang đăng nhập */
 .linkBox > .wrap {
   margin-top: 0;
@@ -90,8 +128,4 @@
 .linkBox {
   width: 100%;
   min-width: 0;
-}
-.linkBox .facebook {
-  height: 40px;
-  font-size: 13px;
 }
