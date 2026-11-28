@@ -69,6 +69,18 @@
   cursor: default;
 }
 
+/* Logo neon: theme tối có quầng sáng nhẹ; theme sáng không glow (trên nền trắng glow làm logo nhoè) */
+:global([data-theme="dark"]) .neon {
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--c-accent) 70%, transparent));
+}
+.btn:hover .neon,
+.googleWrap:hover .neon {
+  transform: scale(1.08);
+}
+.neon {
+  transition: transform 200ms var(--ease-out);
+}
+
 .logo {
   display: grid;
   place-items: center;
