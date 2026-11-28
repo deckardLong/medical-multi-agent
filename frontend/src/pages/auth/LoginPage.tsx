@@ -3,10 +3,11 @@ import { CircleAlert, Lock, LogIn, Mail } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button, Input } from "../../components/ui";
 import { useAuth } from "../../state/AuthContext";
+import { SocialLogin } from "../../components/SocialLogin";
 import s from "./auth.module.css";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginSocial } = useAuth();
   const navigate = useNavigate();
   const from = (useLocation().state as { from?: string } | null)?.from ?? "/";
   const [email, setEmail] = useState("");
@@ -46,6 +47,10 @@ export default function LoginPage() {
           Đăng nhập
         </Button>
       </form>
+      <SocialLogin disabled={busy} onToken={async (provider, token) => {
+        await loginSocial(provider, token, remember);
+        navigate(from, { replace: true });
+      }} />
       <p className={s.switch}>Chưa có tài khoản?<Link to="/register">Đăng ký</Link></p>
     </>
   );

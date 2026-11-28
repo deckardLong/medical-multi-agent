@@ -7,6 +7,8 @@ interface AuthCtx {
   user: User | null;
   ready: boolean;                      // đã kiểm tra token cũ xong chưa (tránh nháy về trang đăng nhập)
   login: (email: string, password: string, remember: boolean) => Promise<void>;
+  /** Đăng nhập bằng token của Google/Facebook (backend xác minh rồi cấp JWT của AURELIA). */
+  loginSocial: (provider: "google" | "facebook", token: string, remember: boolean) => Promise<void>;
   register: (data: RegisterIn) => Promise<void>;
   logout: () => void;
 }
@@ -37,12 +39,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(await auth.me());
   }, []);
 
+  const loginSocial = useCallback(async (provider: "google" | "facebook", token: string, remember: boolean) => {
+    const { access_token } = await auth.social(provider, token);
+    tokenStore.set(access_token, remember);
+    setUser(await auth.me());
+  }, []);
+
   const register = useCallback(async (data: RegisterIn) => {
     await auth.register(data);
     await login(data.email, data.password, false);
   }, [login]);
 
-  const value = useMemo(() => ({ user, ready, login, register, logout }), [user, ready, login, register, logout]);
+  const value = useMemo(() => ({ user, ready, login, loginSocial, register, logout }),
+    [user, ready, login, loginSocial, register, logout]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

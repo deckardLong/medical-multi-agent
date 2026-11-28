@@ -13,6 +13,9 @@ asyncpg==0.32.0
 psycopg2-binary==2.9.13
 alembic==1.20.1
 python-jose==3.5.0
+# Đăng nhập Google: kiểm tra chữ ký ID token (auth/social/providers/google.py)
+google-auth==2.63.1
+requests==2.34.2
 # pydantic EmailStr (đăng ký) cần email-validator; chỉ nạp lúc dựng schema nên dễ sót khi cài mới
 email-validator==2.3.0
 dnspython==2.9.2

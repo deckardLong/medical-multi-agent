@@ -9,6 +9,12 @@ export const auth = {
     api<{ access_token: string }>("/auth/login", { body: new URLSearchParams({ username: email, password }) }),
   register: (data: RegisterIn) => api<User>("/auth/register", { body: data as unknown as Record<string, unknown> }),
   me: () => api<User>("/auth/me"),
+  /** token: Google ID token hoặc Facebook access token — backend tự xác minh với nhà cung cấp */
+  social: (provider: "google" | "facebook", token: string) =>
+    api<{ access_token: string }>(`/auth/social/${provider}`, { body: { token } }),
+  link: (provider: "google" | "facebook", token: string) =>
+    api<void>(`/auth/social/${provider}/link`, { body: { token } }),
+  linkedAccounts: () => api<{ provider: "google" | "facebook"; email: string | null }[]>("/auth/social/accounts"),
 };
 
 export const family = {

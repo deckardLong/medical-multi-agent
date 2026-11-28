@@ -3,6 +3,7 @@ import { CalendarDays, CircleAlert, Lock, Mail, Phone, UserPlus } from "lucide-r
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Input, Select } from "../../components/ui";
 import { useAuth } from "../../state/AuthContext";
+import { SocialLogin } from "../../components/SocialLogin";
 import type { Gender } from "../../api/types";
 import s from "./auth.module.css";
 
@@ -19,7 +20,7 @@ function strength(pw: string): number {
 const STRENGTH_COLOR = ["var(--c-danger)", "var(--c-danger)", "var(--c-warning)", "var(--c-accent)", "var(--c-success)"];
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, loginSocial } = useAuth();
   const navigate = useNavigate();
   const [f, setF] = useState({ last_name: "", first_name: "", email: "", password: "", date_of_birth: "",
                                gender: "" as Gender | "", phone: "" });
@@ -102,6 +103,11 @@ export default function RegisterPage() {
         {touched && !agree && <span style={{ color: "var(--c-danger)", fontSize: 12, marginTop: -8 }}>Cần đồng ý điều khoản</span>}
         <Button type="submit" variant="primary" icon={UserPlus} loading={busy} block>Đăng ký</Button>
       </form>
+      {/* Đăng ký bằng Google/Facebook: backend tự tạo tài khoản + gia đình nếu email chưa có */}
+      <SocialLogin text="signup_with" disabled={busy} onToken={async (provider, token) => {
+        await loginSocial(provider, token, true);
+        navigate("/", { replace: true });
+      }} />
       <p className={s.switch}>Đã có tài khoản?<Link to="/login">Đăng nhập</Link></p>
     </>
   );

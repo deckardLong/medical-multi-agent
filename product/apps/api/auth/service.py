@@ -22,6 +22,6 @@ async def register(session: AsyncSession, data: RegisterIn) -> User:
 
 async def login(session: AsyncSession, data: LoginIn) -> str:
     user = await session.scalar(select(User).where(User.email == data.email))
-    if not user or not verify_password(data.password, user.password_hash):
+    if not user or not user.password_hash or not verify_password(data.password, user.password_hash):
         raise ValueError("Sai email hoặc mật khẩu")
     return create_access_token(str(user.id))

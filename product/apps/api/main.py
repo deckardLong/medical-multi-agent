@@ -14,6 +14,7 @@ from contextlib import asynccontextmanager
 from product.config import ProductEnv
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from .calendar.reminders import scan_and_send
+from .auth.social.router import router as social_router
 
 env = ProductEnv()
 log = logging.getLogger(__name__)
@@ -55,3 +56,4 @@ app.include_router(documents_router)
 app.include_router(records_router)
 app.include_router(calendar_router)
 app.include_router(dashboard_router)
+app.include_router(social_router)

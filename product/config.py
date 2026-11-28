@@ -32,6 +32,11 @@ class ProductEnv(BaseSettings):
     reminder_lead_minutes: int = 60       # nhắc trước bao nhiêu phút
     reminder_scan_interval_minutes: int = 5
 
+     # ======= OAuth =======
+    google_client_ids: list[str] = []          # web, Android, iOS mỗi nền tảng có một client ID riêng
+    facebook_app_id: str | None = None
+    facebook_app_secret: SecretStr | None = None
+
     @field_validator("database_url")
     @classmethod
     def _async_driver(cls, v: str) -> str:

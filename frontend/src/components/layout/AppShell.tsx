@@ -7,6 +7,7 @@ import { AureliaMark } from "../AureliaMark";
 import { Link, NavLink, Navigate, useLocation, useOutlet } from "react-router-dom";
 import { Avatar, Skeleton } from "../ui";
 import { AvatarUploader } from "../AvatarUploader";
+import { LinkedAccounts } from "../LinkedAccounts";
 import { Popover } from "./Popover";
 import { useAuth } from "../../state/AuthContext";
 import { MemberProvider, useMembers } from "../../state/MemberContext";
@@ -74,6 +75,8 @@ function AccountMenu() {
               <div className="muted" style={{ fontSize: 13 }}>{user.email}</div>
             </div>
           </div>
+          <div className={s.popDivider} />
+          <LinkedAccounts />
           <div className={s.popDivider} />
           <button className={s.popItem} onClick={logout}><LogOut size={16} />Đăng xuất</button>
         </>

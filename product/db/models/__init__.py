@@ -9,7 +9,8 @@ from .document import Document
 from .medical_record import MedicalRecord, RecordKind
 from .calendar_event import CalendarEvent, EventType, EventSource
 from .reminder_log import ReminderLog
+from .oauth_account import OAuthAccount, OAuthProvider
 
 __all__ = ["Base", "User", "Gender","Family", "FamilyMember", "MemberType", "Connection", "ConnectionStatus", 
            "ChatSession", "ChatMessage", "MessageRole", "Document", "MedicalRecord", "RecordKind",
-           "CalendarEvent", "EventType", "EventSource", "ReminderLog"]
+           "CalendarEvent", "EventType", "EventSource", "ReminderLog", "OAuthAccount", "OAuthProvider"]

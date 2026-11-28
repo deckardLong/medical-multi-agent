@@ -1,9 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import basicSsl from "@vitejs/plugin-basic-ssl";
 
 // /api/* được proxy sang FastAPI (cổng 8000) → frontend và backend cùng origin, không cần cấu hình CORS khi dev
-export default defineConfig({
-  plugins: [react()],
+// `npm run dev:https` (mode "https"): HTTPS với chứng chỉ tự ký — Facebook chặn đăng nhập trên trang http, kể cả localhost
+export default defineConfig(({ mode }) => ({
+  plugins: mode === "https" ? [react(), basicSsl()] : [react()],
   server: {
     port: 5173,
     proxy: {
@@ -25,4 +27,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
